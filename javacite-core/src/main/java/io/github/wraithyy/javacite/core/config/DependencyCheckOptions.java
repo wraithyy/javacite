@@ -10,6 +10,15 @@ public record DependencyCheckOptions(double failOnCvss, InCheck inCheck) {
         NEVER
     }
 
+    /** CI counts as set when non-blank and not {@code false}/{@code 0}; shared by the Gradle and Maven wiring. */
+    public static boolean isCi(String ciEnv) {
+        if (ciEnv == null) {
+            return false;
+        }
+        String v = ciEnv.trim();
+        return !v.isEmpty() && !v.equalsIgnoreCase("false") && !v.equals("0");
+    }
+
     public static DependencyCheckOptions defaults() {
         return new DependencyCheckOptions(7.0, InCheck.CI);
     }

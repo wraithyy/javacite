@@ -125,6 +125,10 @@
           <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <streamLogs>false</streamLogs>
+          <!-- Host CI must not bind the NVD audit into the ITs (no API key, slow, flaky). -->
+          <environmentVariables>
+            <CI>false</CI>
+          </environmentVariables>
           <showErrors>true</showErrors>
           <addTestClassPath>false</addTestClassPath>
           <mergeUserSettings>true</mergeUserSettings>

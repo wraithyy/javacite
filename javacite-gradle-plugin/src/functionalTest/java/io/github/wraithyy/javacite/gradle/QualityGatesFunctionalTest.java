@@ -102,6 +102,12 @@ class QualityGatesFunctionalTest {
         assertThat(ci.getOutput()).contains(":dependencyCheckAnalyze").contains(":javaciteAudit");
     }
 
+    @Test
+    void auditStaysOutOfCheckWhenCiIsFalse() {
+        BuildResult off = runner(Map.of("CI", "false"), "check", "--dry-run").build();
+        assertThat(off.getOutput()).doesNotContain(":dependencyCheckAnalyze");
+    }
+
     private GradleRunner runnerWithoutCi(String... args) {
         Map<String, String> env = new java.util.HashMap<>(System.getenv());
         env.remove("CI");

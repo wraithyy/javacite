@@ -115,6 +115,15 @@ class ExecutionInjectorTest {
     }
 
     @Test
+    void dependencyCheckIgnoresFalsyCi() {
+        for (String value : new String[] {"false", "FALSE", "0", "", " "}) {
+            MavenProject p = project();
+            inject(p, ConfigLoader.defaults(), Map.of("CI", value));
+            assertThat(plugin(p, "dependency-check-maven").getExecutions()).as("CI=%s", value).isEmpty();
+        }
+    }
+
+    @Test
     void injectingTwiceDoesNotDuplicate() {
         MavenProject p = project();
         inject(p, ConfigLoader.defaults(), Map.of());

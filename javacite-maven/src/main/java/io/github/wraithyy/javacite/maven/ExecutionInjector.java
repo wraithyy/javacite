@@ -1,5 +1,6 @@
 package io.github.wraithyy.javacite.maven;
 
+import io.github.wraithyy.javacite.core.config.DependencyCheckOptions;
 import io.github.wraithyy.javacite.core.config.DependencyCheckOptions.InCheck;
 import io.github.wraithyy.javacite.core.config.JavaciteConfig;
 import io.github.wraithyy.javacite.core.config.SonarMode;
@@ -292,7 +293,7 @@ public final class ExecutionInjector {
             return;
         }
         InCheck inCheck = config.dependencyCheck().inCheck();
-        boolean bound = inCheck == InCheck.ALWAYS || (inCheck == InCheck.CI && env.get("CI") != null);
+        boolean bound = inCheck == InCheck.ALWAYS || (inCheck == InCheck.CI && DependencyCheckOptions.isCi(env.get("CI")));
         Xpp3Dom cfg = node(
                 "configuration",
                 leaf("failBuildOnCVSS", String.valueOf(config.dependencyCheck().failOnCvss())),

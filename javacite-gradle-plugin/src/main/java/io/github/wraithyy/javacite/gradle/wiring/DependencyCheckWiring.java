@@ -49,7 +49,7 @@ public final class DependencyCheckWiring {
 
         boolean inCheck = switch (options.inCheck()) {
             case ALWAYS -> true;
-            case CI -> project.getProviders().environmentVariable("CI").isPresent();
+            case CI -> DependencyCheckOptions.isCi(project.getProviders().environmentVariable("CI").getOrNull());
             case NEVER -> false;
         };
         if (inCheck) {
