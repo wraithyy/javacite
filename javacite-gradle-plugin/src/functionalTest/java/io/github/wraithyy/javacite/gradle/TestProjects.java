@@ -27,6 +27,8 @@ final class TestProjects {
         Map<String, String> environment = new HashMap<>(System.getenv());
         environment.remove("SONAR_HOST_URL");
         environment.remove("SONAR_TOKEN");
+        // CI runners export CI=true, which would pull the network-bound audit into every `check`.
+        environment.remove("CI");
         environment.putAll(env);
         return GradleRunner.create()
                 .withProjectDir(dir.toFile())
