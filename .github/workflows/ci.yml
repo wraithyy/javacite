@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (JDK ${{ matrix.jdk }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk: [21, 25]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          cache: maven
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - name: Cache NVD data
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.javacite/nvd
+          key: nvd-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: nvd-${{ runner.os }}-
+
+      # Plain build on purpose: TestKit functional tests and SpotBugs are not configuration-cache clean yet.
+      # `build` also runs `mavenBuild` (javacite-maven unit tests; invoker ITs, if bound, run in its verify phase).
+      - name: Build and test
+        run: ./gradlew build
+
+      - name: Publish all modules to mavenLocal (needed by the Maven example)
+        run: ./gradlew publishToMavenLocal
+
+      - name: Gradle example
+        env:
+          # Empty on fork PRs; the audit is skipped in that case.
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          # dependency-check joins `check` when CI is set; without an NVD key it is too slow and rate limited.
+          skip=()
+          if [ -z "$NVD_API_KEY" ]; then skip=(-x javaciteAudit); fi
+          ./gradlew -p examples/gradle-spring check "${skip[@]}"
+
+      - name: Maven example
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          skip=()
+          if [ -z "$NVD_API_KEY" ]; then skip=(-Ddependency-check.skip=true); fi
+          mvn -B -f examples/maven-spring/pom.xml verify "${skip[@]}"
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reports-jdk${{ matrix.jdk }}
+          path: |
+            **/build/reports/
+            **/target/surefire-reports/
+          retention-days: 7

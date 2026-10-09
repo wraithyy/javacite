@@ -1,0 +1,9 @@
+{
+  "catalogs": {},
+  "aliases": {
+    "javacite": {
+      "script-ref": "io.github.wraithyy:javacite-cli:0.1.0-SNAPSHOT",
+      "description": "Bootstrap and diagnose javacite (Java quality gates for AI-assisted projects) in a Gradle or Maven project. This catalog on main tracks the development SNAPSHOT; use the tag-pinned form javacite@wraithyy/javacite/vX.Y.Z for a release"
+    }
+  }
+}

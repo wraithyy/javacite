@@ -1,0 +1,9 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.AbstractMavenLifecycleParticipant</role>
+      <role-hint>javacite</role-hint>
+      <implementation>io.github.wraithyy.javacite.maven.JavaciteLifecycleParticipant</implementation>
+    </component>
+  </components>
+</component-set>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+  <module name="SuppressWarningsFilter"/>
+  <module name="TreeWalker">
+    <module name="SuppressWarningsHolder"/>
+    <module name="SuppressionCommentFilter"/>
+    <module name="HiddenField">
+      <property name="ignoreConstructorParameter" value="true"/>
+      <property name="ignoreSetter" value="true"/>
+      <property name="setterCanReturnItsClass" value="true"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="IllegalCatch"/>
+    <module name="IllegalThrows"/>
+    <module name="MagicNumber"/>
+    <module name="MultipleVariableDeclarations"/>
+    <module name="ParameterAssignment"/>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
+    <module name="EqualsHashCode"/>
+    <module name="EqualsAvoidNull"/>
+    <module name="CovariantEquals"/>
+    <module name="DefaultComesLast"/>
+    <module name="EmptyStatement"/>
+    <module name="FallThrough"/>
+    <module name="InnerAssignment"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="ModifiedControlVariable"/>
+    <module name="NestedForDepth"/>
+    <module name="NestedIfDepth"/>
+    <module name="NoClone"/>
+    <module name="NoFinalizer"/>
+    <module name="OneStatementPerLine"/>
+    <module name="PackageDeclaration"/>
+    <module name="UnnecessaryParentheses"/>
+    <module name="AvoidDoubleBraceInitialization"/>
+    <module name="NeedBraces"/>
+    <module name="EmptyBlock"/>
+    <module name="EmptyCatchBlock"/>
+    <module name="AvoidNestedBlocks"/>
+    <module name="FinalClass"/>
+    <module name="HideUtilityClassConstructor">
+      <property name="ignoreAnnotatedBy" value="SpringBootApplication, Configuration"/>
+    </module>
+    <module name="InnerTypeLast"/>
+    <module name="MutableException"/>
+    <module name="OneTopLevelClass"/>
+    <module name="ThrowsCount"/>
+    <module name="VisibilityModifier"/>
+    <module name="AvoidStarImport"/>
+    <module name="IllegalImport"/>
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+    <module name="MissingJavadocMethod"/>
+    <module name="MissingJavadocType"/>
+    <module name="JavadocMethod"/>
+    <module name="InvalidJavadocPosition"/>
+    <module name="NonEmptyAtclauseDescription"/>
+    <module name="SummaryJavadoc"/>
+    <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
+    <module name="ConstantName"/>
+    <module name="LocalFinalVariableName"/>
+    <module name="LocalVariableName"/>
+    <module name="MemberName"/>
+    <module name="MethodName"/>
+    <module name="ParameterName"/>
+    <module name="StaticVariableName"/>
+    <module name="TypeName"/>
+    <module name="MethodLength"/>
+    <module name="ParameterNumber"/>
+    <module name="FinalParameters"/>
+    <module name="ArrayTypeStyle"/>
+    <module name="UpperEll"/>
+    <module name="OuterTypeFilename"/>
+  </module>
+</module>

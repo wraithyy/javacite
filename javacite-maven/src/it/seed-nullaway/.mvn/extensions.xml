@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+  <extension>
+    <groupId>io.github.wraithyy</groupId>
+    <artifactId>javacite-maven-plugin</artifactId>
+    <version>@project.version@</version>
+  </extension>
+</extensions>

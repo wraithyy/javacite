@@ -1,0 +1,16 @@
+# javacite configuration. Every tool is on by default; switch one off with `off`.
+# Docs: https://github.com/wraithyy/javacite#readme
+version: 1
+tools:
+  spotless: on
+  errorprone: on
+  checkstyle: on
+  pmd: on
+  spotbugs: on
+  archunit: on
+  jacoco: on
+  dependencyCheck: on
+  enforcer: on
+  sonar: auto
+spring: auto
+rules: {}

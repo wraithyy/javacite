@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match><Bug category="SECURITY"/></Match>
+  <Match><Bug category="STYLE"/></Match>
+</FindBugsFilter>
