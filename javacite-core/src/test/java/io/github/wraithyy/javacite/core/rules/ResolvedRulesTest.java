@@ -14,8 +14,7 @@ class ResolvedRulesTest {
     void defaultsMatchRegistryDefaults() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.defaults());
 
-        assertThat(r.level("checkstyle.FinalLocalVariable")).isEqualTo(RuleLevel.ERROR);
-        assertThat(r.level("spotbugs.STYLE")).isEqualTo(RuleLevel.WARN);
+        assertThat(r.level("pmd.LocalVariableCouldBeFinal")).isEqualTo(RuleLevel.ERROR);
         assertThat(r.isEnabled("pmd.CloseResource")).isTrue();
         assertThat(r.all()).hasSize(RuleRegistry.load().rules().size());
     }
@@ -24,33 +23,31 @@ class ResolvedRulesTest {
     void overridesApply() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.load("""
                 rules:
-                  checkstyle.FinalLocalVariable: off
+                  pmd.LocalVariableCouldBeFinal: off
                   pmd.CloseResource: warn
-                  spotbugs.STYLE: error
                 """));
 
-        assertThat(r.level("checkstyle.FinalLocalVariable")).isEqualTo(RuleLevel.OFF);
-        assertThat(r.isEnabled("checkstyle.FinalLocalVariable")).isFalse();
+        assertThat(r.level("pmd.LocalVariableCouldBeFinal")).isEqualTo(RuleLevel.OFF);
+        assertThat(r.isEnabled("pmd.LocalVariableCouldBeFinal")).isFalse();
         assertThat(r.level("pmd.CloseResource")).isEqualTo(RuleLevel.WARN);
         assertThat(r.isEnabled("pmd.CloseResource")).isTrue();
-        assertThat(r.level("spotbugs.STYLE")).isEqualTo(RuleLevel.ERROR);
-        assertThat(r.level("checkstyle.MagicNumber")).isEqualTo(RuleLevel.ERROR);
+        assertThat(r.level("pmd.OneDeclarationPerLine")).isEqualTo(RuleLevel.ERROR);
     }
 
     @Test
     void enabledForExcludesOffRulesAndKeepsWarn() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.load("""
                 rules:
-                  checkstyle.FinalLocalVariable: off
-                  checkstyle.MagicNumber: warn
+                  pmd.LocalVariableCouldBeFinal: off
+                  pmd.OneDeclarationPerLine: warn
                 """));
 
-        assertThat(r.enabledFor(Tool.CHECKSTYLE)).extracting(x -> x.rule().id())
-                .doesNotContain("checkstyle.FinalLocalVariable")
-                .contains("checkstyle.MagicNumber");
-        assertThat(r.enabledFor(Tool.CHECKSTYLE)).allMatch(x -> x.rule().tool() == Tool.CHECKSTYLE);
-        assertThat(r.enabledFor(Tool.CHECKSTYLE).stream()
-                        .filter(x -> x.rule().id().equals("checkstyle.MagicNumber"))
+        assertThat(r.enabledFor(Tool.PMD)).extracting(x -> x.rule().id())
+                .doesNotContain("pmd.LocalVariableCouldBeFinal")
+                .contains("pmd.OneDeclarationPerLine");
+        assertThat(r.enabledFor(Tool.PMD)).allMatch(x -> x.rule().tool() == Tool.PMD);
+        assertThat(r.enabledFor(Tool.PMD).stream()
+                        .filter(x -> x.rule().id().equals("pmd.OneDeclarationPerLine"))
                         .findFirst().orElseThrow().level())
                 .isEqualTo(RuleLevel.WARN);
     }
@@ -62,7 +59,7 @@ class ResolvedRulesTest {
         assertThat(r.enabledFor(Tool.PMD)).isEmpty();
         assertThat(r.level("pmd.CloseResource")).isEqualTo(RuleLevel.OFF);
         assertThat(r.isEnabled("errorprone.NullAway")).isFalse();
-        assertThat(r.enabledFor(Tool.CHECKSTYLE)).isNotEmpty();
+        assertThat(r.enabledFor(Tool.ERRORPRONE)).isNotEmpty();
         assertThat(r.isEnabled("errorprone.MissingOverride")).isTrue();
     }
 

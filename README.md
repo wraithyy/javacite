@@ -4,8 +4,8 @@
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-placeholder-lightgrey)](https://central.sonatype.com/namespace/io.github.wraithyy)
 [![Gradle Plugin Portal](https://img.shields.io/badge/Plugin%20Portal-placeholder-lightgrey)](https://plugins.gradle.org/plugin/io.github.wraithyy.javacite)
 
-Ultracite for Java. One `javacite.yml`, one line in your build, and Spotless, Error Prone, NullAway, Checkstyle,
-PMD, SpotBugs, ArchUnit, JaCoCo and OWASP dependency-check run with every rule at error level. Opt out per rule or
+Ultracite for Java. One `javacite.yml`, one line in your build, and Spotless, Error Prone, NullAway, PMD, ArchUnit,
+JaCoCo and OWASP dependency-check run with every rule at error level. Opt out per rule or
 per tool when a rule does not fit. `init` generates `AGENTS.md`, editor rule files, Claude Code hooks and a git
 pre-commit hook from the same rule set, so coding agents are told exactly what the build will enforce.
 Inspired by [Ultracite](https://www.ultracite.ai); not affiliated with it.
@@ -61,22 +61,23 @@ at a SNAPSHOT used for development.
 
 ## What you get
 
-| Concern | Tool | Version |
-|---|---|---|
-| Formatting | Spotless + palantir-java-format | 8.10.3 (Gradle) / 3.10.3 (Maven) + 2.102.0 |
-| Bug patterns | Error Prone | 2.50.0 |
-| Null safety | NullAway + JSpecify | 0.14.2 + 1.0.1 |
-| Style | Checkstyle | 14.3.0 |
-| Code smells | PMD | 7.28.0 |
-| Defects | SpotBugs | 4.10.4 |
-| Architecture | ArchUnit (`javacite-archunit`) | 1.5.1 |
-| Coverage gate | JaCoCo (line coverage, default 0.80) | 0.8.15 |
-| Vulnerable dependencies | OWASP dependency-check | 13.0.0 |
-| Banned dependencies, JDK gate | Gradle resolution check / maven-enforcer | 3.6.3 (Maven) |
-| Quality server | SonarQube report import and profile export | scanner 7.5.0.8588 (Gradle) / 5.8.0.7211 (Maven) |
+| Concern | Tool | License | Version |
+|---|---|---|---|
+| Formatting | Spotless + palantir-java-format | Apache-2.0 | 8.10.3 (Gradle) / 3.10.3 (Maven) + 2.102.0 |
+| Bug patterns, style | Error Prone | Apache-2.0 | 2.50.0 |
+| Null safety | NullAway + JSpecify | MIT + Apache-2.0 | 0.14.2 + 1.0.1 |
+| Code smells, style | PMD | BSD-style | 7.28.0 |
+| Architecture | ArchUnit (`javacite-archunit`) | Apache-2.0 | 1.5.1 |
+| Coverage gate | JaCoCo (line coverage, default 0.80) | EPL-2.0 | 0.8.15 |
+| Vulnerable dependencies | OWASP dependency-check | Apache-2.0 | 13.0.0 |
+| Banned dependencies, JDK gate | Gradle resolution check / maven-enforcer | Apache-2.0 | 3.6.3 (Maven) |
+| Quality server | SonarQube: scanner properties file and profile export, you run the official `sonar-scanner` | n/a | see [docs/sonar.md](docs/sonar.md) |
 
-230 rules in total, listed in [docs/rules.md](docs/rules.md). A Spring Boot project additionally gets layering and
-injection rules ([docs/spring-preset.md](docs/spring-preset.md)).
+No LGPL dependencies; JaCoCo is EPL-2.0 (weak copyleft, no obligations for unmodified use, see [NOTICE](NOTICE)).
+214 rules in total, listed in [docs/rules.md](docs/rules.md). A Spring Boot project additionally gets layering and
+injection rules ([docs/spring-preset.md](docs/spring-preset.md)). Security taint analysis (SpotBugs/find-sec-bugs
+style) is not covered, see [docs/sonar.md](docs/sonar.md#what-is-not-covered). Coming from Checkstyle or SpotBugs:
+[docs/migration.md](docs/migration.md#migrating-from-checkstyle-and-spotbugs).
 
 ## Minimal `javacite.yml`
 
@@ -88,7 +89,7 @@ tools:
   jacoco: { min: 0.70 }
 rules:
   # Records of DTOs with many components trip this; revisit when the module is split.
-  checkstyle.ParameterNumber: off
+  pmd.ExcessiveParameterList: off
   archunit.spring.NoMockBeanInUnitTests: warn
 ```
 
@@ -101,10 +102,10 @@ Everything not listed keeps its strict default. A missing file means all default
 rules-registry.yml  +  javacite.yml
           |
           v   (ResolvedRules: registry defaults, overridden per rule and per tool)
-  generators ----> build/javacite/{checkstyle.xml, pmd.xml, spotbugs-exclude.xml}
+  generators ----> build/javacite/pmd.xml
           |------> Error Prone / NullAway compiler arguments
           |------> ArchUnit rule switches
-          |------> sonar-profile.xml
+          |------> sonar-profile.xml, sonar-project.properties
           '------> AGENTS.md, CLAUDE.md, Cursor / Copilot / Windsurf rules, hook scripts
 ```
 

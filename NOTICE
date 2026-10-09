@@ -7,16 +7,18 @@ Third-party components used at runtime by the javacite Gradle plugin and Maven
 extension keep their own licenses. They are consumed unmodified as library
 dependencies or invoked as build tools; none of their source is included here.
 
-Notable copyleft-licensed dependencies:
+javacite has no LGPL or GPL dependencies. All runtime dependencies are
+Apache-2.0, MIT or BSD licensed, with one exception:
 
-- Checkstyle: LGPL-2.1 (https://checkstyle.org/). Optional: disable with
-  `tools.checkstyle: off`.
-- SpotBugs and spotbugs-gradle-plugin / spotbugs-maven-plugin: LGPL-2.1
-  (https://spotbugs.github.io/). Optional: disable with `tools.spotbugs: off`.
-- SonarQube Scanner for Gradle (org.sonarqube) and sonar-maven-plugin: LGPL-3.0
-  (https://github.com/SonarSource/sonar-scanner-gradle). Applied only when
-  `tools.sonar` resolves to on.
+- JaCoCo: EPL-2.0 (https://www.eclemma.org/jacoco/). The Eclipse Public
+  License 2.0 is a weak copyleft license; using JaCoCo unmodified as a build
+  tool imposes no obligations on your code or on javacite's license. Its terms
+  apply only if you modify and redistribute JaCoCo itself. Optional: disable
+  with `tools.jacoco: off`.
 
-Other tools (Spotless, palantir-java-format, Error Prone, NullAway, JSpecify,
-PMD, JaCoCo, ArchUnit, OWASP dependency-check, picocli, snakeyaml-engine) are
-Apache-2.0, BSD, EPL or MIT licensed.
+Components and their licenses:
+
+- Apache-2.0: Spotless, palantir-java-format, Error Prone, JSpecify, ArchUnit,
+  OWASP dependency-check, snakeyaml-engine, picocli, maven-enforcer.
+- MIT: NullAway.
+- BSD: PMD.

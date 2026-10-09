@@ -5,7 +5,13 @@ import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_
 import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
 import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noMethods;
+
+import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaField;
+import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -31,7 +37,57 @@ public final class JavaciteRules {
     @ArchTest
     public static final ArchRule NO_PACKAGE_CYCLES = noPackageCycles(JavaciteRuleSwitches.current());
 
+    @ArchTest
+    public static final ArchRule FIELDS_MUST_BE_PRIVATE = fieldsMustBePrivate(JavaciteRuleSwitches.current());
+
+    @ArchTest
+    public static final ArchRule NO_CLONE_OVERRIDE = noCloneOverride(JavaciteRuleSwitches.current());
+
+    @ArchTest
+    public static final ArchRule IMMUTABLE_EXCEPTIONS = immutableExceptions(JavaciteRuleSwitches.current());
+
     private JavaciteRules() {}
+
+    static ArchRule fieldsMustBePrivate(JavaciteRuleSwitches s) {
+        // Synthetic fields (this$0, $VALUES, $assertionsDisabled) are compiler-made and not user-controllable.
+        DescribedPredicate<JavaField> mutableState = DescribedPredicate.describe(
+                "that are not static final",
+                f -> !f.getModifiers().contains(JavaModifier.SYNTHETIC)
+                        && !(f.getModifiers().contains(JavaModifier.STATIC)
+                                && f.getModifiers().contains(JavaModifier.FINAL)));
+        return GatedRule.of(
+                "archunit.FieldsMustBePrivate",
+                s,
+                fields().that(mutableState).should().bePrivate().allowEmptyShould(true));
+    }
+
+    static ArchRule noCloneOverride(JavaciteRuleSwitches s) {
+        return GatedRule.of(
+                "archunit.NoCloneOverride",
+                s,
+                noMethods()
+                        .that()
+                        .haveName("clone")
+                        .and()
+                        .haveRawParameterTypes(new Class<?>[0])
+                        // Condition is deliberately always true for the selected methods: any match is a violation.
+                        .should()
+                        .haveName("clone")
+                        .as("no class should declare a parameterless clone() method")
+                        .allowEmptyShould(true));
+    }
+
+    static ArchRule immutableExceptions(JavaciteRuleSwitches s) {
+        return GatedRule.of(
+                "archunit.ImmutableExceptions",
+                s,
+                fields().that()
+                        .areDeclaredInClassesThat()
+                        .areAssignableTo(Throwable.class)
+                        .should()
+                        .beFinal()
+                        .allowEmptyShould(true));
+    }
 
     static ArchRule noFieldInjection(JavaciteRuleSwitches s) {
         return GatedRule.of("archunit.NoFieldInjection", s, NO_CLASSES_SHOULD_USE_FIELD_INJECTION);

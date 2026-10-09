@@ -13,7 +13,7 @@ class SonarProfileGeneratorTest {
     void emitsRulesWithSonarKeysAndPriorities() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.load("""
                 rules:
-                  checkstyle.IllegalCatch: warn
+                  pmd.AvoidCatchingThrowable: warn
                 """));
         String xml = SonarProfileGenerator.generate(r, "javacite & co");
 
@@ -27,7 +27,7 @@ class SonarProfileGeneratorTest {
     void disabledSonarRulesAreOmitted() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.load("""
                 rules:
-                  checkstyle.HiddenField: off
+                  errorprone.HidingField: off
                 """));
 
         assertThat(SonarProfileGenerator.generate(r, "p")).doesNotContain("<key>S1117</key>");
@@ -35,7 +35,7 @@ class SonarProfileGeneratorTest {
 
     @Test
     void profileWithoutAnySonarKeysHasEmptyRules() {
-        StringBuilder sb = new StringBuilder("tools:\n  checkstyle: off\n  pmd: off\n  spotbugs: off\n  errorprone: off\n  nullaway: off\n  archunit: off\n");
+        StringBuilder sb = new StringBuilder("tools:\n  pmd: off\n  errorprone: off\n  nullaway: off\n  archunit: off\n");
         String xml = SonarProfileGenerator.generate(ResolvedRules.of(ConfigLoader.load(sb.toString())), "p");
 
         assertThat(xml).doesNotContain("<rule>").contains("<rules>");
@@ -44,11 +44,11 @@ class SonarProfileGeneratorTest {
     @Test
     void propertiesUseConventionalLocations() {
         assertThat(SonarProperties.forGradle("build"))
-                .containsEntry("sonar.java.checkstyle.reportPaths", "build/reports/checkstyle/main.xml")
+                .containsEntry("sonar.java.pmd.reportPaths", "build/reports/pmd/main.xml")
                 .containsEntry("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
-                .hasSize(4);
+                .hasSize(2);
         assertThat(SonarProperties.forMaven("target"))
-                .containsEntry("sonar.java.spotbugs.reportPaths", "target/spotbugsXml.xml")
+                .containsEntry("sonar.java.pmd.reportPaths", "target/pmd.xml")
                 .containsEntry("sonar.coverage.jacoco.xmlReportPaths", "target/site/jacoco/jacoco.xml");
     }
 }

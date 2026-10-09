@@ -37,6 +37,11 @@ class JavaciteRuleSwitchesTest {
     }
 
     @Test
+    void unknownIdIsTreatedAsEnabled() {
+        assertThat(JavaciteRuleSwitches.from(null).isEnabled("archunit.DoesNotExist")).isTrue();
+    }
+
+    @Test
     void locatesConfigByWalkingUp() throws Exception {
         Path cfg = tmp.resolve("javacite.yml");
         Files.writeString(cfg, "version: 1\n");

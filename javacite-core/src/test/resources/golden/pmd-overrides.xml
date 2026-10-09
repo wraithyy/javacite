@@ -313,4 +313,96 @@
   <rule ref="category/java/codestyle.xml/PackageCase">
     <priority>2</priority>
   </rule>
+  <rule ref="category/java/codestyle.xml/MethodArgumentCouldBeFinal">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/AvoidCatchingGenericException">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/AvoidCatchingThrowable">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/OneDeclarationPerLine">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/AvoidReassigningLoopVariables">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/design.xml/SimplifyBooleanExpressions">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/design.xml/SimplifyBooleanReturns">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/UseEqualsToCompareStrings">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/OverrideBothEqualsAndHashcode">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/DefaultLabelNotLastInSwitch">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/NonExhaustiveSwitch">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/DoubleBraceInitialization">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/codestyle.xml/UnnecessaryBlock">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/documentation.xml/CommentRequired">
+    <priority>2</priority>
+    <properties>
+      <property name="methodWithOverrideCommentRequirement" value="ignored"/>
+      <property name="accessorCommentRequirement" value="ignored"/>
+      <property name="fieldCommentRequirement" value="ignored"/>
+      <property name="publicMethodCommentRequirement" value="required"/>
+      <property name="protectedMethodCommentRequirement" value="required"/>
+      <property name="classCommentRequirement" value="required"/>
+      <property name="enumCommentRequirement" value="required"/>
+      <property name="serialVersionUIDCommentRequired" value="ignored"/>
+      <property name="serialPersistentFieldsCommentRequired" value="ignored"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/documentation.xml/DanglingJavadoc">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/codestyle.xml/ModifierOrder">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/design.xml/ExcessiveParameterList">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/design.xml/NcssCount">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/design.xml/AvoidThrowingRawExceptionTypes">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/SuspiciousEqualsMethodName">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/AvoidCallingFinalize">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/LongLiteralEndingWithLowercaseL">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/errorprone.xml/DontImportSun">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/security.xml/HardCodedCryptoKey">
+    <priority>2</priority>
+  </rule>
+  <rule ref="category/java/security.xml/InsecureCryptoIv">
+    <priority>2</priority>
+  </rule>
 </ruleset>

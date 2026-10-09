@@ -74,7 +74,24 @@ class ExecutionInjectorTest {
         inject(p, ConfigLoader.load("tools:\n  pmd: off\n"), Map.of());
 
         assertThat(plugin(p, PMD)).isNull();
-        assertThat(plugin(p, "maven-checkstyle-plugin")).isNotNull();
+    }
+
+    @Test
+    void onlyPermissiveToolsAreInjected() {
+        MavenProject p = project();
+        inject(p, ConfigLoader.defaults(), Map.of("SONAR_TOKEN", "x"));
+
+        assertThat(p.getBuild().getPlugins())
+                .extracting(Plugin::getArtifactId)
+                .containsExactlyInAnyOrder(
+                        "maven-enforcer-plugin",
+                        "javacite-maven-plugin",
+                        "maven-compiler-plugin",
+                        "spotless-maven-plugin",
+                        PMD,
+                        "jacoco-maven-plugin",
+                        "dependency-check-maven");
+        assertThat(p.getProperties().stringPropertyNames()).noneMatch(k -> k.startsWith("sonar."));
     }
 
     @Test

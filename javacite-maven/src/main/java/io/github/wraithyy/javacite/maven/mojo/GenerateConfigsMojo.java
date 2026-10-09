@@ -10,7 +10,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-/** Writes target/javacite/{checkstyle,pmd,spotbugs-exclude}.xml; the extension binds it to validate. */
+/** Writes target/javacite/pmd.xml; the extension binds it to validate. */
 @Mojo(name = "generate-configs", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class GenerateConfigsMojo extends AbstractMojo {
 

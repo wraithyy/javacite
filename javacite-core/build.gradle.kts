@@ -18,7 +18,6 @@ val errorproneValidation = configurations.create("errorproneValidation") {
 }
 
 dependencies {
-    testImplementation(libs.checkstyle)
     testImplementation(libs.pmd.java)
     errorproneValidation(libs.errorprone.core)
     errorproneValidation(libs.nullaway)

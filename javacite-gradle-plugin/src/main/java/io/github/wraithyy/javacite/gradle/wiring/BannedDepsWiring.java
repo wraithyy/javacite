@@ -11,9 +11,8 @@ public final class BannedDepsWiring {
 
     // Tool-internal classpaths are the plugin's business, not the user's dependency graph.
     private static final Set<String> TOOL_CONFIGURATIONS = Set.of(
-            "errorprone", "spotbugs", "spotbugsPlugins", "spotbugsSlf4j", "pmd", "checkstyle", "jacocoAgent",
-            "jacocoAnt", "dependencyCheckAnalyze", "dependencyCheckAggregate", "dependencyCheckUpdate",
-            "dependencyCheckPurge", "sonarScanner");
+            "errorprone", "pmd", "jacocoAgent", "jacocoAnt", "dependencyCheckAnalyze", "dependencyCheckAggregate", "dependencyCheckUpdate",
+            "dependencyCheckPurge");
 
     private BannedDepsWiring() {}
 

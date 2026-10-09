@@ -30,15 +30,12 @@ build at that point.
 | Tool | Plugin | Phase and goal | Strict settings |
 |---|---|---|---|
 | enforcer | `maven-enforcer-plugin` 3.6.3 | `validate`: `enforce` | `requireJavaVersion [21,)`, `bannedDependencies` from `deps.ban`, `fail=true` |
-| (configs) | `javacite-maven-plugin` | `validate`: `generate-configs` | Writes `target/javacite/{checkstyle,pmd,spotbugs-exclude}.xml` at build time, so `mvn clean verify` does not delete them. Bound only when one of those tools is on. |
+| (configs) | `javacite-maven-plugin` | `validate`: `generate-configs` | Writes `target/javacite/pmd.xml` at build time, so `mvn clean verify` does not delete it. Bound only when PMD is on. |
 | compiler | `maven-compiler-plugin` | the default compile executions | `release` from `java:` always, even with Error Prone and NullAway off, unless you set `maven.compiler.release` or a plugin-level `release`. With Error Prone or NullAway on, also: `fork=true`, `-Xplugin:ErrorProne ...` with the registry levels, `error_prone_core` 2.50.0 and `nullaway` 0.14.2 in `annotationProcessorPaths`, the javac `--add-exports/--add-opens` as `-J` arguments. `jspecify` 1.0.1 is added as `provided` when you do not declare it. |
 | spotless | `spotless-maven-plugin` 3.10.3 | `verify`: `check` | palantir-java-format 2.102.0, remove unused imports, trim whitespace, end with newline, `formatAnnotations` (same steps as the Gradle build) |
-| checkstyle | `maven-checkstyle-plugin` 3.6.0 (Checkstyle 14.3.0) | `verify`: `check` | generated config, test sources included, `violationSeverity=error` (a rule at `warn` is reported but does not fail the Maven build, whereas the Gradle build fails on it) |
 | pmd | `maven-pmd-plugin` 3.28.0 (PMD 7.28.0) | `verify`: `check` | generated ruleset, tests included, `failurePriority=2` |
-| spotbugs | `spotbugs-maven-plugin` 4.10.4.1 | `verify`: `check` | effort `Max`, threshold `Medium`, generated exclude filter |
 | jacoco | `jacoco-maven-plugin` 0.8.15 | `prepare-agent`, `report`, `check` | `LINE` `COVEREDRATIO` at `tools.jacoco.min` |
 | dependencyCheck | `dependency-check-maven` 13.0.0 | `verify`: `check` when `inCheck` says so | `failBuildOnCVSS`, `NVD_API_KEY` from the environment, cache in `~/.javacite/nvd`. When not bound, the plugin is still configured, so `mvn org.owasp:dependency-check-maven:check` works on demand. |
-| sonar | `sonar-maven-plugin` 5.8.0.7211 | not bound | Report properties set on each project, see [sonar.md](sonar.md). |
 
 Tools set to `off` get nothing injected. Because everything hangs off `verify`, `mvn verify` is the full gate and
 `mvn -DskipTests verify` the fast one (this is what the agent hooks run).
@@ -48,7 +45,7 @@ Tools set to `off` get nothing injected. Because everything hangs off `verify`, 
 - Your declaration, version and configuration are kept. javacite only adds its `javacite` execution with its own
   configuration next to yours. If an execution with id `javacite` already exists it is left alone.
 - When javacite creates the plugin itself, the configuration sits on the plugin as well as on the `javacite` execution, so
-  command-line goals such as `mvn spotless:apply` or `mvn checkstyle:check` (which run as `default-cli`) see it. When you
+  command-line goals such as `mvn spotless:apply` or `mvn pmd:check` (which run as `default-cli`) see it. When you
   declare the plugin, only the execution carries javacite's configuration: run `mvn spotless:apply@javacite` instead.
 - A plugin that is only in `pluginManagement` is added with the managed version, not javacite's pinned one (the build
   logs which). Managed configuration is not applied to it.
@@ -58,12 +55,11 @@ Tools set to `off` get nothing injected. Because everything hangs off `verify`, 
   added unless the same `artifactId` is already listed, and any other key you set wins, except `fork=false` with Error
   Prone on, which is forced to `true` with a warning.
 
-### Forked goals caveat (PMD and SpotBugs)
+### Forked goals caveat (PMD)
 
-`pmd:check` and `spotbugs:check` first fork `pmd:pmd` / `spotbugs:spotbugs`, and the forked run sees only
+`pmd:check` first forks `pmd:pmd`, and the forked run sees only
 plugin-level configuration, not the configuration of an execution. When javacite creates the plugin entry it puts
-the generated ruleset and exclude filter at plugin level, so this works. If you declare `maven-pmd-plugin` or
-`spotbugs-maven-plugin` yourself, the analysis uses your plugin-level configuration, not javacite's, and javacite logs a WARNING saying so. In that case
+the generated ruleset at plugin level, so this works. If you declare `maven-pmd-plugin` yourself, the analysis uses your plugin-level configuration, not javacite's, and javacite logs a WARNING saying so. In that case
 point it at the generated files:
 
 ```xml
@@ -88,7 +84,7 @@ you prefer to set it on the Maven JVM too.
 
 There is no javacite-specific escape hatch (no `-Dno-errorprone`). Switch tools off in `javacite.yml` so the decision
 is reviewed and visible in `AGENTS.md`. The standard skip properties of the underlying plugins (for example
-`-Dcheckstyle.skip`, `-Dpmd.skip`, `-Dspotbugs.skip`, `-Djacoco.skip`, `-Denforcer.skip`) have not been verified
+`-Dpmd.skip`, `-Djacoco.skip`, `-Denforcer.skip`) have not been verified
 against javacite's executions; treat them as UNVERIFIED and do not rely on them in CI.
 
 ## Goals
@@ -100,5 +96,6 @@ Call them with the full coordinates, or add `io.github.wraithyy` to your `plugin
 | `mvn io.github.wraithyy:javacite-maven-plugin:init` | Adds the extension to `.mvn/extensions.xml`, then writes `javacite.yml`, `AGENTS.md`, editor rules, Claude Code hooks, the pre-commit hook and `ArchitectureTest`. Idempotent. See [agents.md](agents.md). |
 | `mvn io.github.wraithyy:javacite-maven-plugin:doctor` | Reports JDK, config parse status, enabled tools, Spring detection and which generated files exist. |
 | `mvn io.github.wraithyy:javacite-maven-plugin:sonar-profile` | Writes `target/javacite/sonar-profile.xml`, see [sonar.md](sonar.md). |
+| `mvn io.github.wraithyy:javacite-maven-plugin:sonar-properties` | Writes `target/javacite/sonar-project.properties` for the official `sonar-scanner` CLI, see [sonar.md](sonar.md). |
 | `mvn io.github.wraithyy:javacite-maven-plugin:check` | Alias that only reports the enabled tools. The checks themselves run in `verify`. |
 | `javacite-maven-plugin:generate-configs` | Writes the generated tool configs; bound to `validate` by the extension, rarely called by hand. |

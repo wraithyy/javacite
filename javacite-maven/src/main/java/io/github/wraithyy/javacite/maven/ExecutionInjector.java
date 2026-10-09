@@ -3,11 +3,9 @@ package io.github.wraithyy.javacite.maven;
 import io.github.wraithyy.javacite.core.config.DependencyCheckOptions;
 import io.github.wraithyy.javacite.core.config.DependencyCheckOptions.InCheck;
 import io.github.wraithyy.javacite.core.config.JavaciteConfig;
-import io.github.wraithyy.javacite.core.config.SonarMode;
 import io.github.wraithyy.javacite.core.config.Tool;
 import io.github.wraithyy.javacite.core.generate.ErrorProneArgsGenerator;
 import io.github.wraithyy.javacite.core.rules.ResolvedRules;
-import io.github.wraithyy.javacite.core.sonar.SonarProperties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,17 +51,14 @@ public final class ExecutionInjector {
     public void inject(MavenProject project, boolean spring) {
         ResolvedRules rules = ResolvedRules.of(config, spring);
         enforcer(project);
-        if ((on(Tool.CHECKSTYLE) || on(Tool.PMD) || on(Tool.SPOTBUGS))) {
+        if (on(Tool.PMD)) {
             bind(project, "io.github.wraithyy", "javacite-maven-plugin", selfVersion, List.of(), null, "validate", "generate-configs");
         }
         compiler(project, rules);
         spotless(project);
-        checkstyle(project);
         pmd(project);
-        spotbugs(project);
         jacoco(project);
         dependencyCheck(project);
-        sonar(project);
     }
 
     private boolean on(Tool t) {
@@ -220,23 +215,6 @@ public final class ExecutionInjector {
         bind(p, "com.diffplug.spotless", "spotless-maven-plugin", "3.10.3", List.of(), node("configuration", java), true, "verify", "check");
     }
 
-    // Default violationSeverity=error: warn-level rules are reported but do not fail the build.
-    private void checkstyle(MavenProject p) {
-        if (!on(Tool.CHECKSTYLE)) {
-            return;
-        }
-        Xpp3Dom cfg = node(
-                "configuration",
-                leaf("configLocation", "${project.build.directory}/javacite/checkstyle.xml"),
-                leaf("failsOnError", "true"),
-                leaf("failOnViolation", "true"),
-                leaf("violationSeverity", "error"),
-                leaf("consoleOutput", "true"),
-                leaf("includeTestSourceDirectory", "true"));
-        bind(p, MAVEN_PLUGINS, "maven-checkstyle-plugin", "3.6.0",
-                List.of(dependency("com.puppycrawl.tools", "checkstyle", "14.3.0", null)), cfg, true, "verify", "check");
-    }
-
     // failurePriority 2: priority-3 (warn) violations are reported without failing.
     private void pmd(MavenProject p) {
         if (!on(Tool.PMD)) {
@@ -256,22 +234,6 @@ public final class ExecutionInjector {
                         dependency("net.sourceforge.pmd", "pmd-java", "7.28.0", null)),
                 cfg, true, "verify", "check");
         warnForkedUserPlugin("maven-pmd-plugin", userPmd);
-    }
-
-    private void spotbugs(MavenProject p) {
-        if (!on(Tool.SPOTBUGS)) {
-            return;
-        }
-        boolean userSpotbugs = find(p.getBuild(), "com.github.spotbugs", "spotbugs-maven-plugin") != null;
-        Xpp3Dom cfg = node(
-                "configuration",
-                leaf("effort", "Max"),
-                leaf("threshold", "Medium"),
-                leaf("excludeFilterFile", "${project.build.directory}/javacite/spotbugs-exclude.xml"),
-                leaf("xmlOutput", "true"),
-                leaf("failOnError", "true"));
-        bind(p, "com.github.spotbugs", "spotbugs-maven-plugin", "4.10.4.1", List.of(), cfg, true, "verify", "check");
-        warnForkedUserPlugin("spotbugs-maven-plugin", userSpotbugs);
     }
 
     private void jacoco(MavenProject p) {
@@ -307,25 +269,13 @@ public final class ExecutionInjector {
         }
     }
 
-    private void sonar(MavenProject p) {
-        SonarMode mode = config.sonar();
-        boolean active = mode == SonarMode.ON
-                || (mode == SonarMode.AUTO && (env.get("SONAR_HOST_URL") != null || env.get("SONAR_TOKEN") != null));
-        if (!active) {
-            return;
-        }
-        addUnbound(p, "org.sonarsource.scanner.maven", "sonar-maven-plugin", "5.8.0.7211", null);
-        SonarProperties.forMaven("target").forEach((k, v) -> p.getProperties().setProperty(k, v));
-        p.getProperties().setProperty("sonar.java.source", String.valueOf(config.java()));
-    }
-
     private void bind(MavenProject p, String g, String a, String version, List<Dependency> deps, Xpp3Dom cfg, String phase, String... goals) {
         bind(p, g, a, version, deps, cfg, false, phase, goals);
     }
 
     /**
      * @param pluginLevel true to also put the configuration on the plugin when we create it, so command-line invocations
-     *     ({@code mvn spotless:apply}, {@code checkstyle:check}; run as {@code default-cli}) and forked goals
+     *     ({@code mvn spotless:apply}; run as {@code default-cli}) and forked goals
      *     ({@code pmd:check} forks {@code pmd:pmd}) see it. A plugin the user declared keeps its own configuration
      *     and only our execution carries ours; invoke that one as {@code mvn spotless:apply@javacite}.
      */
@@ -369,7 +319,7 @@ public final class ExecutionInjector {
         return managed.getVersion();
     }
 
-    /** pmd:check and spotbugs:check fork a second goal that only reads plugin-level configuration. */
+    /** pmd:check forks a second goal that only reads plugin-level configuration. */
     private static void warnForkedUserPlugin(String a, boolean userDeclared) {
         if (userDeclared) {
             LOG.warn("javacite: {} is declared in the pom, so its forked analysis uses your plugin-level configuration, "

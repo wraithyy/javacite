@@ -18,11 +18,18 @@ final class ToolsParser {
 
     private static final String SONAR = "sonar";
     private static final String PATH = "tools";
+    private static final List<String> REMOVED = List.of("checkstyle", "spotbugs");
 
     private ToolsParser() {}
 
     static ToolsSection parse(Object node) {
         Map<String, Object> tools = map(node, PATH);
+        for (String removed : REMOVED) {
+            if (tools.containsKey(removed)) {
+                throw new ConfigException("Tool '" + removed + "' at '" + PATH + "." + removed
+                        + "' was removed in favour of PMD/Error Prone, see docs/migration.md");
+            }
+        }
         List<String> validKeys = new ArrayList<>(java.util.Arrays.stream(Tool.values()).map(Tool::key).toList());
         validKeys.add(SONAR);
         checkKeys(tools, validKeys, PATH);

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-/** Seeds one violation per tool into a small Spring-less project and checks javaciteCheck fails on it. */
+/** Seeds one violation per tool (Spotless, PMD, Error Prone, NullAway) into a small Spring-less project and checks javaciteCheck fails on it. */
 class ToolWiringFunctionalTest {
 
     private static final String CLEAN =
@@ -58,9 +58,7 @@ class ToolWiringFunctionalTest {
         all[0] = "--console=plain";
         all[1] = "--continue";
         System.arraycopy(args, 0, all, 2, args.length);
-        // spotbugs-gradle-plugin 6.5.12 (latest) calls Configuration.setVisible, deprecated in Gradle 9.8, so
-        // --warning-mode=fail is impossible while it is applied.
-        GradleRunner runner = TestProjects.runner(dir, "all", Map.of(), all);
+        GradleRunner runner = TestProjects.runner(dir, "fail", Map.of(), all);
         return expectFailure ? runner.buildAndFail() : runner.build();
     }
 
@@ -83,31 +81,6 @@ class ToolWiringFunctionalTest {
                 "src/main/java/demo/Messy.java",
                 "package demo;\npublic class Messy {   int x ;}\n",
                 ":spotlessJavaCheck", "spotlessApply");
-    }
-
-    @Test
-    void missingFinalParameterFailsCheckstyle() throws IOException {
-        assertSeedFails(
-                "src/main/java/demo/Params.java",
-                """
-                package demo;
-
-                /** Seed. */
-                public final class Params {
-                    private Params() {}
-
-                    /**
-                     * Seed.
-                     *
-                     * @param n the n
-                     * @return the result
-                     */
-                    public static int twice(int n) {
-                        return n * 2;
-                    }
-                }
-                """,
-                ":checkstyleMain", "[FinalParameters]");
     }
 
     @Test
@@ -134,55 +107,6 @@ class ToolWiringFunctionalTest {
                 }
                 """,
                 ":pmdMain", "EmptyCatchBlock");
-    }
-
-    @Test
-    void randomUsedOnceFailsSpotbugs() throws IOException {
-        assertSeedFails(
-                "src/main/java/demo/Dice.java",
-                """
-                package demo;
-
-                import java.util.Random;
-
-                /** Seed. */
-                public final class Dice {
-                    private Dice() {}
-
-                    /**
-                     * Seed.
-                     *
-                     * @return the result
-                     */
-                    public static int roll() {
-                        return new Random().nextInt();
-                    }
-                }
-                """,
-                ":spotbugsMain", "SpotBugs");
-    }
-
-    @Test
-    void spotbugsClasspathOverridesBomDowngradeOfCommonsLang3() throws IOException {
-        write("build.gradle", """
-                plugins { id 'java'; id 'io.github.wraithyy.javacite' }
-                repositories { mavenCentral() }
-                // Mimics io.spring.dependency-management downgrading the tool classpath.
-                configurations.matching { it.name == 'spotbugs' }.configureEach {
-                    resolutionStrategy.eachDependency {
-                        if (it.requested.name == 'commons-lang3') { it.useVersion('3.17.0') }
-                    }
-                }
-                tasks.register('showLang3') {
-                    notCompatibleWithConfigurationCache('resolves a configuration in the task action')
-                    doLast {
-                        println 'LANG3=' + configurations.spotbugs.resolvedConfiguration.resolvedArtifacts
-                                .findAll { it.name == 'commons-lang3' }*.moduleVersion*.id*.version
-                    }
-                }
-                """);
-        BuildResult result = run(false, "showLang3");
-        assertThat(result.getOutput()).contains("LANG3=[3.20.0]");
     }
 
     @Test
@@ -239,7 +163,7 @@ class ToolWiringFunctionalTest {
     void pmdOffRemovesTask() throws IOException {
         write("javacite.yml", "tools:\n  pmd: off\n");
         BuildResult result = run(false, "tasks", "--all");
-        assertThat(result.getOutput()).doesNotContain("pmdMain").contains("checkstyleMain");
+        assertThat(result.getOutput()).doesNotContain("pmdMain").contains("javaciteCheck");
     }
 
     @Test
@@ -252,6 +176,31 @@ class ToolWiringFunctionalTest {
         run(false, "spotlessApply", "-PspotlessIdeHook=" + hooked);
         assertThat(Files.readString(hooked)).doesNotContain("   int x ;");
         assertThat(Files.readString(other)).contains("   int x ;");
+    }
+
+    @Test
+    void checkstyleToolIsRejectedWithMigrationMessage() throws IOException {
+        write("javacite.yml", "tools:\n  checkstyle: on\n");
+        BuildResult result = run(true, "javaciteCheck");
+        assertThat(result.getOutput()).contains("checkstyle").containsIgnoringCase("PMD");
+    }
+
+    @Test
+    void sonarPropertiesFileListsReportsAndBinaries() throws IOException {
+        run(false, "javaciteSonarProperties");
+        assertThat(Files.readString(dir.resolve("build/javacite/sonar-project.properties")))
+                .contains("sonar.projectKey=sample")
+                .contains("sonar.java.pmd.reportPaths=")
+                .contains("sonar.java.binaries=build/classes/java/main")
+                .contains("sonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml")
+                .contains("sonar.junit.reportPaths=build/test-results/test")
+                .contains("sonar.sources=src/main/java");
+    }
+
+    @Test
+    void sonarOffSkipsPropertiesTask() throws IOException {
+        write("javacite.yml", "tools:\n  sonar: off\n");
+        assertThat(run(false, "tasks", "--all").getOutput()).doesNotContain("javaciteSonarProperties");
     }
 
     @Test

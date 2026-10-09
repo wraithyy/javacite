@@ -17,7 +17,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-/** Writes the SonarQube quality profile backup that mirrors the enabled javacite rules. */
+/** Writes the Sonar quality profile backup that mirrors the enabled javacite rules. */
 @CacheableTask
 public abstract class SonarProfileTask extends DefaultTask {
 
@@ -35,7 +35,7 @@ public abstract class SonarProfileTask extends DefaultTask {
     public static void register(Project project) {
         project.getTasks().register("javaciteSonarProfile", SonarProfileTask.class, task -> {
             task.setGroup("javacite");
-            task.setDescription("Writes build/javacite/sonar-profile.xml for import into SonarQube.");
+            task.setDescription("Writes build/javacite/sonar-profile.xml for import into Sonar.");
             task.getConfigText().set(Probes.configText(project));
             task.getSpringOnClasspath().set(Probes.springOnClasspath(project));
             task.getOutputFile().set(project.getLayout().getBuildDirectory().file("javacite/sonar-profile.xml"));

@@ -11,9 +11,7 @@ tools:
   spotless: on
   errorprone: on
   nullaway: { mode: onlyNullMarked }
-  checkstyle: on
   pmd: on
-  spotbugs: on
   archunit: on
   jacoco: { min: 0.80 }
   dependencyCheck: { failOnCvss: 7, inCheck: ci }
@@ -54,16 +52,14 @@ forced off, and it vanishes from `AGENTS.md`.
 | `spotless` | `on`, `off`, `{ ratchetFrom: <git ref> }` | Format with palantir-java-format, remove unused imports, trim whitespace. |
 | `errorprone` | `on`, `off` | Error Prone checks, compiled into `javac`. On Gradle, `off` also disables NullAway because it runs as an Error Prone plugin. |
 | `nullaway` | `on`, `off`, `{ mode, packages }` | See below. |
-| `checkstyle` | `on`, `off` | |
 | `pmd` | `on`, `off` | |
-| `spotbugs` | `on`, `off` | |
 | `archunit` | `on`, `off` | Controls whether `init` writes `ArchitectureTest` and whether the registry's ArchUnit rules are active. |
 | `jacoco` | `on`, `off`, `{ min }` | Line coverage gate. |
 | `dependencyCheck` | `on`, `off`, `{ failOnCvss, inCheck }` | OWASP dependency-check. |
 | `enforcer` | `on`, `off` | Maven only: `maven-enforcer-plugin` with the JDK 21 gate and `deps.ban`. On Gradle this key has no effect; the JDK gate and `deps.ban` are always applied (use `deps.ban: []` to disable the latter). |
-| `sonar` | `auto`, `on`, `off` | `auto` wires Sonar when `SONAR_HOST_URL` or `SONAR_TOKEN` is set in the environment. See [sonar.md](sonar.md). |
+| `sonar` | `auto`, `on`, `off` | `auto` enables the Sonar tasks when `SONAR_HOST_URL` or `SONAR_TOKEN` is set in the environment. See [sonar.md](sonar.md). |
 
-Tools without an option object (`errorprone`, `checkstyle`, `pmd`, `spotbugs`, `archunit`, `enforcer`) reject
+Tools without an option object (`errorprone`, `pmd`, `archunit`, `enforcer`) reject
 `{ ... }`. An object means "on with these options"; to switch a tool off use the plain `off` value.
 
 ### `nullaway`
@@ -120,7 +116,7 @@ existing code, see [migration.md](migration.md). Currently honoured by the Gradl
 
 ```yaml
 rules:
-  checkstyle.FinalLocalVariable: off
+  pmd.LocalVariableCouldBeFinal: off
   archunit.spring.NoFieldInjection: warn
 ```
 
@@ -133,9 +129,7 @@ What `warn` means depends on the tool, because the tools themselves differ:
 | Tool | `warn` behaviour |
 |---|---|
 | Error Prone, NullAway | Reported as a compiler warning (`-Xep:Name:WARN`); the build does not fail. |
-| Checkstyle | Severity `warning`. Maven reports it and continues. Gradle is configured with `maxWarnings = 0`, so a warning still fails `checkstyleMain`. |
 | PMD | Priority 3 (errors are priority 2). Maven fails only on priority 2, so `warn` is reported only. Gradle's `Pmd` task has no severity gate: any violation fails the build, so `warn` is reported but does not relax anything. Use `off` to silence a PMD rule on Gradle. |
-| SpotBugs | No warn level. Only `error` categories are reported; `warn` is treated like `off`. |
 | ArchUnit | Rules are either evaluated or skipped. `warn` is evaluated, so the test still fails; only `off` skips a rule. |
 | Sonar profile | `error` exports as priority `MAJOR`, `warn` as `MINOR`. |
 | `AGENTS.md` | The rule is listed with a `(warning)` suffix. |
@@ -174,15 +168,23 @@ Configuration errors fail the build (or `init`) with a message naming the path. 
 
 ```
 Unknown key 'tool' at '<root>'. Valid keys: [version, java, tools, spring, rules, deps, agents]
-Unknown key 'pdm' at 'tools'. Valid keys: [spotless, errorprone, nullaway, checkstyle, pmd, spotbugs, archunit, jacoco, dependencyCheck, enforcer, sonar]
+Unknown key 'pdm' at 'tools'. Valid keys: [spotless, errorprone, nullaway, pmd, archunit, jacoco, dependencyCheck, enforcer, sonar]
 Invalid value 'maybe' at 'tools.pmd'. Valid values: [on, off]
 Tool 'pmd' does not accept options (at 'tools.pmd'); use on or off
 Value of 'java' must be 17 or higher but was 11
 Mode 'annotatedPackages' at 'tools.nullaway' requires a non-empty 'packages' list
 Value of 'tools.jacoco.min' must be between 0 and 1 but was 80
-Unknown rule id 'checkstyle.FinalLocal'. Closest valid ids: [checkstyle.FinalLocalVariable, ...]
+Unknown rule id 'pmd.FinalLocal'. Closest valid ids: [pmd.LocalVariableCouldBeFinal, ...]
 Unknown agent target 'vim' at 'agents.targets'. Valid targets: [agents-md, claude-md, ...]
 Unsupported 'version': 2. Only version 1 is supported
 ```
 
 A file that is not valid YAML fails with `Invalid YAML: ...`.
+
+### Removed tools: `checkstyle` and `spotbugs`
+
+javacite no longer ships Checkstyle or SpotBugs (both LGPL-2.1). Setting `tools.checkstyle` or `tools.spotbugs`, to
+any value, and any `checkstyle.*` or `spotbugs.*` rule id, fails validation with a message pointing to the migration
+guide. This is deliberate: silently ignoring the key would leave you believing a check still runs. Remove the keys
+(and rule overrides) or follow [migration.md](migration.md#migrating-from-checkstyle-and-spotbugs) to map them to
+their PMD, Error Prone and ArchUnit replacements.

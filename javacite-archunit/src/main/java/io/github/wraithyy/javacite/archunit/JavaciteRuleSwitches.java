@@ -54,6 +54,11 @@ public final class JavaciteRuleSwitches {
     }
 
     public boolean isEnabled(String id) {
-        return rules.isEnabled(id);
+        try {
+            return rules.isEnabled(id);
+        } catch (IllegalArgumentException unknownId) {
+            // Ids newer than the registry on the classpath default to on rather than failing the build.
+            return true;
+        }
     }
 }

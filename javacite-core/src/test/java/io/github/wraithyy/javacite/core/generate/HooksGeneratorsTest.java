@@ -69,7 +69,9 @@ class HooksGeneratorsTest {
         Path stub = write(dir, "stub.sh", "#!/bin/sh\nprintf '%s\\n' \"$1\" >> '" + log + "'\n");
         Path java = Files.writeString(dir.resolve("Foo Bar.java"), "class Foo {}");
         Path txt = Files.writeString(dir.resolve("notes.txt"), "x");
-        Map<String, String> env = Map.of("JAVACITE_FORMAT_CMD", stub.toString());
+        // Claude Code always sets CLAUDE_PROJECT_DIR; pin it so an inherited value from the test host
+        // (the sandbox that runs the build) cannot point the hook at a different project.
+        Map<String, String> env = Map.of("JAVACITE_FORMAT_CMD", stub.toString(), "CLAUDE_PROJECT_DIR", dir.toString());
 
         String payload = "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"%s\"}}";
         assertThat(run(dir, env, payload.formatted(txt), "sh", script.toString()).exit()).isZero();
@@ -100,7 +102,12 @@ class HooksGeneratorsTest {
         }
         String payload = "{\"tool_input\":{\"file_path\":\"%s\"}}".formatted(java);
 
-        Result r = run(dir, Map.of("JAVACITE_FORMAT_CMD", stub.toString(), "PATH", bin.toString()), payload, "/bin/sh", script.toString());
+        Result r = run(
+                dir,
+                Map.of("JAVACITE_FORMAT_CMD", stub.toString(), "PATH", bin.toString(), "CLAUDE_PROJECT_DIR", dir.toString()),
+                payload,
+                "/bin/sh",
+                script.toString());
 
         assertThat(r.exit()).isZero();
         assertThat(Files.readString(log).strip()).isEqualTo(java.toRealPath().toString());

@@ -18,15 +18,13 @@ final class TestProjects {
         Files.writeString(file, content);
     }
 
-    /** Runner with the plugin classpath; Sonar variables are stripped so the host's setup cannot leak in. */
+    /** Runner with the plugin classpath. */
     static GradleRunner runner(Path dir, String warningMode, Map<String, String> env, String... args) {
         String[] all = new String[args.length + 2];
         all[0] = "--configuration-cache";
         all[1] = "--warning-mode=" + warningMode;
         System.arraycopy(args, 0, all, 2, args.length);
         Map<String, String> environment = new HashMap<>(System.getenv());
-        environment.remove("SONAR_HOST_URL");
-        environment.remove("SONAR_TOKEN");
         // CI runners export CI=true, which would pull the network-bound audit into every `check`.
         environment.remove("CI");
         environment.putAll(env);

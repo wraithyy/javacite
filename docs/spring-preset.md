@@ -174,6 +174,6 @@ class OrderServiceTest {
 
 ## Tips
 
-- `@SpringBootApplication` classes often trip `checkstyle.HideUtilityClassConstructor` (Spring needs a non-private
-  constructor). Opt that one rule out and leave a comment, as `examples/maven-spring/javacite.yml` does.
+- `@SpringBootApplication` classes can trip `pmd.InstantiableUtilityClass`-style utility-class rules (Spring needs a
+  non-private constructor). If one fires on your application class, opt that one rule out and leave a comment.
 - Relax one rule without losing the others: `archunit.spring.ServiceNaming: off`.

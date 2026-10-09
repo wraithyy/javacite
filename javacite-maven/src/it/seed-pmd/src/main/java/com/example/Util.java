@@ -1,9 +1,10 @@
 package com.example;
 
-/** Seeded Checkstyle violation: utility class without a hidden constructor. */
+/** Seeded PMD violations: public method without Javadoc and a non-final parameter. */
 public final class Util {
 
-    /** Doubles. */
+    private Util() {}
+
     public static int twice(int n) {
         return n * 2;
     }

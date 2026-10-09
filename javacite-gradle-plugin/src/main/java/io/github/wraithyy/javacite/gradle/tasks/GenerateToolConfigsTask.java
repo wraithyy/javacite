@@ -2,9 +2,7 @@ package io.github.wraithyy.javacite.gradle.tasks;
 
 import io.github.wraithyy.javacite.core.config.ConfigLoader;
 import io.github.wraithyy.javacite.core.config.JavaciteConfig;
-import io.github.wraithyy.javacite.core.generate.CheckstyleXmlGenerator;
 import io.github.wraithyy.javacite.core.generate.PmdRulesetGenerator;
-import io.github.wraithyy.javacite.core.generate.SpotbugsFilterGenerator;
 import io.github.wraithyy.javacite.core.rules.ResolvedRules;
 import io.github.wraithyy.javacite.gradle.wiring.SpringDetector;
 import java.io.IOException;
@@ -22,7 +20,7 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskProvider;
 
-/** Writes the Checkstyle, PMD and SpotBugs configs derived from javacite.yml into {@code build/javacite/}. */
+/** Writes the PMD ruleset and spring marker derived from javacite.yml into {@code build/javacite/}. */
 @CacheableTask
 public abstract class GenerateToolConfigsTask extends DefaultTask {
 
@@ -44,7 +42,7 @@ public abstract class GenerateToolConfigsTask extends DefaultTask {
         }
         return project.getTasks().register(NAME, GenerateToolConfigsTask.class, task -> {
             task.setGroup("javacite");
-            task.setDescription("Generates Checkstyle, PMD and SpotBugs configs from javacite.yml.");
+            task.setDescription("Generates the PMD ruleset from javacite.yml.");
             task.getYaml().set(Probes.configText(project));
             task.getSpringDetected().set(SpringDetector.detected(project));
             task.getOutputDir().set(project.getLayout().getBuildDirectory().dir("javacite"));
@@ -59,9 +57,7 @@ public abstract class GenerateToolConfigsTask extends DefaultTask {
         ResolvedRules rules = ResolvedRules.of(config, spring);
         Path out = getOutputDir().get().getAsFile().toPath();
         Files.createDirectories(out);
-        write(out.resolve("checkstyle.xml"), new CheckstyleXmlGenerator().generate(rules));
         write(out.resolve("pmd.xml"), new PmdRulesetGenerator().generate(rules));
-        write(out.resolve("spotbugs-exclude.xml"), new SpotbugsFilterGenerator().generate(rules));
         write(out.resolve("spring.detected"), Boolean.toString(spring));
     }
 

@@ -20,23 +20,36 @@ for `io.github.wraithyy` in `settings.xml`).
 | `init` | Aggregator. Runs the shared `InitWriter` (reports created/updated/unchanged), creates or merges `.mvn/extensions.xml`, activates `core.hooksPath` only when `.git` sits in the project root. Idempotent. |
 | `doctor` | Prints JDK gate (21+), Maven version, config path and parse status, tools on/off, Spring detection, generated files present/missing, `core.hooksPath`, whether `javacite-archunit` is declared. Fails on an invalid `javacite.yml`. |
 | `sonar-profile` | Writes `target/javacite/sonar-profile.xml` (SonarQube profile backup of the enabled rules). |
-| `generate-configs` | Writes `target/javacite/{checkstyle,pmd,spotbugs-exclude}.xml`. Bound to `validate` by the extension. |
+| `generate-configs` | Writes `target/javacite/pmd.xml`. Bound to `validate` by the extension. |
+| `sonar-properties` | Aggregator, no lifecycle fork. Writes `target/javacite/sonar-project.properties` at the execution root: project key, sources/tests, binaries, resolved libraries, `sonar.java.source`, PMD and JaCoCo report paths per module, surefire report paths. Runs no scanner. |
 | `check` | Reports enabled tools; the checks themselves are lifecycle executions, use `mvn -q -DskipTests verify`. |
 
 ## How the extension injects executions
 
 `JavaciteLifecycleParticipant.afterProjectsRead` reads `javacite.yml` from the multi-module root and, for every
 `jar`/`war` module, adds an execution with id `javacite` per enabled tool (enforcer, generate-configs, Error Prone and
-NullAway on the compiler, spotless, checkstyle, pmd, spotbugs, jacoco, dependency-check, sonar). A plugin the user
+NullAway on the compiler, spotless, pmd, jacoco, dependency-check). A plugin the user
 already declares keeps its own configuration and only gains the extra execution. Generated tool configs are written
 at build time into `target/javacite/`, so `mvn clean verify` does not delete them.
 
-### PMD and SpotBugs caveat
+### PMD caveat
 
-`pmd:check` and `spotbugs:check` fork their analysis goal (`pmd:pmd`, `spotbugs:spotbugs`) and the forked execution
+`pmd:check` forks its analysis goal (`pmd:pmd`) and the forked execution
 only sees plugin-level configuration. For plugins the extension creates it therefore puts the configuration at plugin
-level. If the user declares `maven-pmd-plugin` or `spotbugs-maven-plugin` themselves, their configuration wins for the
-forked goal and the javacite ruleset/filter is applied only to the `javacite` execution; set the ruleset there too.
+level. If the user declares `maven-pmd-plugin` themselves, their configuration wins for the
+forked goal and the javacite ruleset is applied only to the `javacite` execution; set the ruleset there too.
+
+## SonarQube
+
+javacite no longer injects a Sonar Maven plugin. Generate the properties file and run the stock `sonar-scanner` CLI
+(token via `SONAR_TOKEN`, host via `SONAR_HOST_URL`, never on the command line):
+
+```
+mvn -B verify io.github.wraithyy:javacite-maven-plugin:sonar-properties
+sonar-scanner -Dproject.settings=target/javacite/sonar-project.properties
+```
+
+Run `verify` first so the PMD, JaCoCo and surefire reports exist.
 
 ## Integration tests
 
@@ -46,8 +59,9 @@ forked goal and the javacite ruleset/filter is applied only to the `javacite` ex
 |---|---|
 | `clean-spring` | copy of `examples/maven-spring`, `verify` succeeds |
 | `seed-nullaway` | `verify` fails with `[NullAway]` |
-| `seed-checkstyle` | `verify` fails in checkstyle (`HideUtilityClassConstructor`) |
-| `pmd-off` | `tools.pmd: off` leaves checkstyle in the build but no `pmd` execution |
+| `seed-pmd` | `verify` fails in `maven-pmd-plugin` (`CommentRequired`) |
+| `pmd-off` | `tools.pmd: off` leaves spotless in the build but no `pmd` execution |
+| `sonar-properties` | `sonar-properties` writes the file with project key, sources, binaries and `sonar.java.pmd.reportPaths` |
 | `init-goal` | two `init` runs; files exist, second run reports only `unchanged` |
 
 `@project.version@` in `.mvn/extensions.xml` is filtered by invoker. The plugin is installed into the regular local

@@ -18,14 +18,12 @@ class GeneratorsGoldenTest {
     private static final String OVERRIDES =
             """
             rules:
-              checkstyle.FinalLocalVariable: off
-              checkstyle.HiddenField: warn
+              pmd.LocalVariableCouldBeFinal: off
+              errorprone.HidingField: warn
               pmd.CloseResource: warn
               pmd.UnusedPrivateField: off
               errorprone.MissingOverride: warn
               errorprone.UnusedVariable: off
-              spotbugs.STYLE: warn
-              spotbugs.SECURITY: off
             tools:
               nullaway: { mode: annotatedPackages, packages: [com.acme, org.x] }
             """;
@@ -39,16 +37,6 @@ class GeneratorsGoldenTest {
     }
 
     @Test
-    void checkstyleDefault() throws IOException {
-        check("checkstyle-default.xml", new CheckstyleXmlGenerator().generate(ResolvedRules.of(defaults())));
-    }
-
-    @Test
-    void checkstyleOverrides() throws IOException {
-        check("checkstyle-overrides.xml", new CheckstyleXmlGenerator().generate(ResolvedRules.of(overrides())));
-    }
-
-    @Test
     void pmdDefault() throws IOException {
         check("pmd-default.xml", new PmdRulesetGenerator().generate(ResolvedRules.of(defaults())));
     }
@@ -56,21 +44,6 @@ class GeneratorsGoldenTest {
     @Test
     void pmdOverrides() throws IOException {
         check("pmd-overrides.xml", new PmdRulesetGenerator().generate(ResolvedRules.of(overrides())));
-    }
-
-    @Test
-    void spotbugsDefault() throws IOException {
-        check("spotbugs-default.xml", new SpotbugsFilterGenerator().generate(ResolvedRules.of(defaults())));
-    }
-
-    @Test
-    void spotbugsOverrides() throws IOException {
-        JavaciteConfig c = overrides();
-        ResolvedRules r = ResolvedRules.of(c);
-        check("spotbugs-overrides.xml", new SpotbugsFilterGenerator().generate(r));
-        assertThat(new SpotbugsFilterGenerator().includeCategories(r))
-                .doesNotContain("STYLE", "SECURITY")
-                .contains("CORRECTNESS");
     }
 
     @Test

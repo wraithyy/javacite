@@ -38,14 +38,10 @@ class ConfigLoaderTest {
                 version: 1
                 tools:
                   pmd: off
-                  checkstyle: on
-                  spotbugs: false
                   archunit: true
                 """);
 
         assertThat(c.tool(Tool.PMD)).isInstanceOf(ToolSetting.Off.class);
-        assertThat(c.tool(Tool.CHECKSTYLE)).isInstanceOf(ToolSetting.On.class);
-        assertThat(c.tool(Tool.SPOTBUGS).enabled()).isFalse();
         assertThat(c.tool(Tool.ARCHUNIT).enabled()).isTrue();
         assertThat(c.tool(Tool.ERRORPRONE).enabled()).isTrue();
     }
@@ -106,7 +102,7 @@ class ConfigLoaderTest {
                 version: 1
                 java: 21
                 rules:
-                  checkstyle.FinalLocalVariable: off
+                  pmd.LocalVariableCouldBeFinal: off
                   pmd.CloseResource: warn
                   archunit.NoFieldInjection: error
                 deps:
@@ -117,7 +113,7 @@ class ConfigLoaderTest {
 
         assertThat(c.java()).isEqualTo(21);
         assertThat(c.rules())
-                .containsEntry("checkstyle.FinalLocalVariable", RuleLevel.OFF)
+                .containsEntry("pmd.LocalVariableCouldBeFinal", RuleLevel.OFF)
                 .containsEntry("pmd.CloseResource", RuleLevel.WARN)
                 .containsEntry("archunit.NoFieldInjection", RuleLevel.ERROR);
         assertThat(c.bannedDeps()).containsExactly("a:b");
@@ -173,11 +169,21 @@ class ConfigLoaderTest {
     }
 
     @Test
+    void removedToolsFailWithMigrationHint() {
+        for (String tool : new String[] {"checkstyle", "spotbugs"}) {
+            assertThatThrownBy(() -> ConfigLoader.load("tools:\n  " + tool + ": on"))
+                    .isInstanceOf(ConfigException.class)
+                    .hasMessageContaining(tool)
+                    .hasMessageContaining("docs/migration.md");
+        }
+    }
+
+    @Test
     void unknownRuleIdSuggestsClosestIds() {
-        assertThatThrownBy(() -> ConfigLoader.load("rules:\n  checkstyle.FinalLocal: off"))
+        assertThatThrownBy(() -> ConfigLoader.load("rules:\n  pmd.LocalVariableCouldBeFina: off"))
                 .isInstanceOf(ConfigException.class)
-                .hasMessageContaining("checkstyle.FinalLocal")
-                .hasMessageContaining("checkstyle.FinalLocalVariable");
+                .hasMessageContaining("pmd.LocalVariableCouldBeFina")
+                .hasMessageContaining("pmd.LocalVariableCouldBeFinal");
     }
 
     @Test

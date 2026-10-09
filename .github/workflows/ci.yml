@@ -38,7 +38,7 @@ jobs:
           key: nvd-${{ runner.os }}-${{ github.run_id }}
           restore-keys: nvd-${{ runner.os }}-
 
-      # Plain build on purpose: TestKit functional tests and SpotBugs are not configuration-cache clean yet.
+      # Plain build on purpose: TestKit functional tests are not configuration-cache clean yet.
       # `build` also runs `mavenBuild` (javacite-maven unit tests; invoker ITs, if bound, run in its verify phase).
       - name: Build and test
         run: ./gradlew build
