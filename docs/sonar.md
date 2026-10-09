@@ -50,9 +50,9 @@ curl -H "Authorization: Bearer $SONAR_TOKEN" -X POST \
 
 Then set the profile as default for Java or assign it to projects in the Sonar UI.
 
-> **Status: the XML format is pending live validation.** The shape follows the documented profile backup format, but
-> it has not yet been restored into a live SonarQube. Treat the restore step as experimental and check the result
-> in the Sonar UI. If the import is rejected, please report the server version and error message.
+> **Status: validated on SonarQube Community Build 26.9** (`scripts/sonar-validate.sh`): the generated profile
+> restores with `ruleSuccesses: 30, ruleFailures: 0`, Checkstyle findings show up as `external_checkstyle:*`
+> issues and JaCoCo coverage is imported. Older server versions may differ; re-run the script against yours.
 
 ## Validating against a local SonarQube
 

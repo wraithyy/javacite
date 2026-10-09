@@ -1,0 +1,22 @@
+javacite
+Copyright 2026 Josef Kvapil
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party components used at runtime by the javacite Gradle plugin and Maven
+extension keep their own licenses. They are consumed unmodified as library
+dependencies or invoked as build tools; none of their source is included here.
+
+Notable copyleft-licensed dependencies:
+
+- Checkstyle: LGPL-2.1 (https://checkstyle.org/). Optional: disable with
+  `tools.checkstyle: off`.
+- SpotBugs and spotbugs-gradle-plugin / spotbugs-maven-plugin: LGPL-2.1
+  (https://spotbugs.github.io/). Optional: disable with `tools.spotbugs: off`.
+- SonarQube Scanner for Gradle (org.sonarqube) and sonar-maven-plugin: LGPL-3.0
+  (https://github.com/SonarSource/sonar-scanner-gradle). Applied only when
+  `tools.sonar` resolves to on.
+
+Other tools (Spotless, palantir-java-format, Error Prone, NullAway, JSpecify,
+PMD, JaCoCo, ArchUnit, OWASP dependency-check, picocli, snakeyaml-engine) are
+Apache-2.0, BSD, EPL or MIT licensed.

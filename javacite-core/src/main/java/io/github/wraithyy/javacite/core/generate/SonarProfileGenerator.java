@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * Exports the enabled rules that carry sonar keys as a SonarQube quality profile backup XML.
  *
- * <p>Pending live validation: the XML shape follows the documented profile backup format but has not been imported
- * into a live SonarQube yet; run {@code scripts/sonar-validate.sh} against a real instance to close this.
+ * <p>Validated against SonarQube Community Build 26.9 via {@code scripts/sonar-validate.sh} (restore reported
+ * 30 rule successes, 0 failures). Re-run the script when changing this format or targeting another server version.
  */
 public final class SonarProfileGenerator {
 

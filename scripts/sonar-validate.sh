@@ -16,7 +16,8 @@ EXAMPLE="$ROOT/examples/gradle-spring"
 CONTAINER=javacite-sonar
 HOST=http://localhost:9000
 PROJECT_KEY=javacite-example
-ADMIN_PASS=javacite-admin-1
+# SonarQube enforces a strong password policy (length, cases, digit, symbol).
+ADMIN_PASS=Javacite-Admin-2026!
 KEEP=${1:-}
 
 log() { printf '\n==> %s\n' "$*"; }
@@ -46,7 +47,10 @@ done
 # A fresh container forces an admin password change before the API accepts a token.
 # Basic auth is built by hand so the script holds no literal credential pair.
 basic() { printf 'Authorization: Basic %s' "$(printf '%s' "$1" | base64 | tr -d '\n')"; }
-curl -fsS -H "$(basic "admin:admin")" -X POST "$HOST/api/users/change_password?login=admin&previousPassword=admin&password=$ADMIN_PASS" >/dev/null 2>&1 || true
+# Already-changed password (re-run against a kept container) is fine; any other failure is not.
+if ! curl -fsS -H "$(basic "admin:admin")" -X POST "$HOST/api/users/change_password?login=admin&previousPassword=admin&password=$ADMIN_PASS" >/dev/null 2>&1; then
+    curl -fsS -o /dev/null -H "$(basic "admin:$ADMIN_PASS")" "$HOST/api/users/current" || { echo "admin password change failed" >&2; exit 4; }
+fi
 
 log "creating analysis token"
 TOKEN=$(curl -fsS -H "$(basic "admin:$ADMIN_PASS")" -X POST "$HOST/api/user_tokens/generate?name=javacite-$(date +%s)" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')

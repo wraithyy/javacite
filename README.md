@@ -8,6 +8,7 @@ Ultracite for Java. One `javacite.yml`, one line in your build, and Spotless, Er
 PMD, SpotBugs, ArchUnit, JaCoCo and OWASP dependency-check run with every rule at error level. Opt out per rule or
 per tool when a rule does not fit. `init` generates `AGENTS.md`, editor rule files, Claude Code hooks and a git
 pre-commit hook from the same rule set, so coding agents are told exactly what the build will enforce.
+Inspired by [Ultracite](https://www.ultracite.ai); not affiliated with it.
 
 ## Quick start
 
