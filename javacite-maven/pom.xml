@@ -36,7 +36,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- false: deployment waits in the Central Portal for a manual Publish click; -Dcentral.autoPublish=true to skip it -->
     <central.autoPublish>false</central.autoPublish>
-    <maven.version>3.9.16</maven.version>
+    <maven.version>3.10.0</maven.version>
   </properties>
 
   <dependencies>
