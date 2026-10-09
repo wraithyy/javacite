@@ -63,14 +63,14 @@ class QualityGatesFunctionalTest {
 
     @Test
     void coverageBelowMinFailsCheck() throws IOException {
-        write("javacite.yml", "tools:\n  jacoco: { min: 0.8 }\n  spotless: off\n  errorprone: off\n  checkstyle: off\n  pmd: off\n  spotbugs: off\n");
+        write("javacite.yml", "tools:\n  jacoco: { min: 0.8 }\n  spotless: off\n  errorprone: off\n  pmd: off\n");
         BuildResult result = runner(Map.of(), "check").buildAndFail();
         assertThat(result.getOutput()).contains("Rule violated for bundle").contains("lines covered ratio");
     }
 
     @Test
     void coverageAboveMinPassesAndWritesXml() throws IOException {
-        write("javacite.yml", "tools:\n  jacoco: { min: 0.4 }\n  spotless: off\n  errorprone: off\n  checkstyle: off\n  pmd: off\n  spotbugs: off\n");
+        write("javacite.yml", "tools:\n  jacoco: { min: 0.4 }\n  spotless: off\n  errorprone: off\n  pmd: off\n");
         runner(Map.of(), "check").build();
         assertThat(dir.resolve("build/reports/jacoco/test/jacocoTestReport.xml")).exists();
     }

@@ -7,6 +7,7 @@ import com.tngtech.archunit.junit.ArchTests;
 import io.github.wraithyy.javacite.archunit.JavaciteRules;
 import io.github.wraithyy.javacite.archunit.JavaciteSpringRules;
 
+/** Applies the javacite ArchUnit rule sets to the example application. */
 @AnalyzeClasses(packages = "io.github.wraithyy.javacite.example", importOptions = ImportOption.DoNotIncludeTests.class)
 final class ArchitectureTest {
 

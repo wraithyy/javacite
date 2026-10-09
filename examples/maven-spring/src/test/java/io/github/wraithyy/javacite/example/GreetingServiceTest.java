@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 
+/** Unit tests for the greeting rules. */
 class GreetingServiceTest {
 
     private final GreetingService service = new GreetingService(new GreetingRepository());

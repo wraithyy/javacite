@@ -4,9 +4,7 @@ version: 1
 tools:
   spotless: on
   errorprone: on
-  checkstyle: on
   pmd: on
-  spotbugs: on
   archunit: on
   jacoco: on
   dependencyCheck: on

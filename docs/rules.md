@@ -3,9 +3,9 @@
 
 > This file is generated from `javacite-core/src/main/resources/javacite/rules-registry.yml`. Do not edit it by hand.
 
-230 rules. Every rule is listed at its default level; set any id under `rules:` in `javacite.yml` to `error`, `warn` or `off` (see [configuration](configuration.md)). The agent text is what appears in the generated `AGENTS.md` while the rule is enabled.
+214 rules. Every rule is listed at its default level; set any id under `rules:` in `javacite.yml` to `error`, `warn` or `off` (see [configuration](configuration.md)). The agent text is what appears in the generated `AGENTS.md` while the rule is enabled.
 
-## errorprone (43)
+## errorprone (66)
 
 | Id | Default | Category | Sonar | Agent text |
 |---|---|---|---|---|
@@ -52,6 +52,29 @@
 | `errorprone.DoubleBraceInitialization` | error | correctness |  | Never use double brace initialization. |
 | `errorprone.FloatingPointLiteralPrecision` | error | correctness |  | Write floating-point literals that are exactly representable or explain the rounding. |
 | `errorprone.EqualsUnsafeCast` | error | correctness |  | Check the type with instanceof before casting in equals. |
+| `errorprone.HidingField` | error | correctness | `java:S1117` | Avoid fields in subclasses that hide fields of the superclass. |
+| `errorprone.EqualsHashCode` | error | correctness |  | Override hashCode() whenever equals() is overridden. |
+| `errorprone.WildcardImport` | error | imports |  | Never use wildcard imports. |
+| `errorprone.EmptyBlockTag` | error | documentation |  | Give every Javadoc block tag a description. |
+| `errorprone.InvalidParam` | error | documentation |  | Javadoc @param must name an existing parameter. |
+| `errorprone.InvalidThrows` | error | documentation |  | Javadoc @throws must name an exception the method can throw. |
+| `errorprone.InvalidBlockTag` | error | documentation |  | Use only valid Javadoc block tags. |
+| `errorprone.ThrowSpecificExceptions` | error | correctness |  | Throw specific exception types instead of RuntimeException, Exception or Throwable. |
+| `errorprone.Finalize` | error | design |  | Never override finalize(); use try-with-resources or Cleaner. |
+| `errorprone.EqualsIncompatibleType` | error | correctness |  | Never call equals() on objects of incompatible types. |
+| `errorprone.InconsistentHashCode` | error | correctness |  | Compute hashCode() from the same fields equals() compares. |
+| `errorprone.IdentityBinaryExpression` | error | correctness |  | Never use identical operands in a binary expression such as a == a. |
+| `errorprone.GuardedBy` | error | concurrency |  | Access @GuardedBy members only while holding the declared lock. |
+| `errorprone.WaitNotInLoop` | error | concurrency |  | Call wait() only inside a loop that rechecks its condition. |
+| `errorprone.SynchronizeOnNonFinalField` | error | concurrency |  | Never synchronize on a non-final field. |
+| `errorprone.UnsynchronizedOverridesSynchronized` | error | concurrency |  | Never override a synchronized method with an unsynchronized one. |
+| `errorprone.StaticGuardedByInstance` | error | concurrency |  | Never guard static state with an instance lock. |
+| `errorprone.BoxedPrimitiveConstructor` | error | performance |  | Use valueOf() instead of boxed primitive constructors. |
+| `errorprone.UnnecessaryBoxedVariable` | error | performance |  | Use primitives instead of boxed local variables where null is impossible. |
+| `errorprone.LoopOverCharArray` | error | performance |  | Do not call toCharArray() only to iterate over a string; use charAt(). |
+| `errorprone.UnnecessaryAssignment` | error | correctness |  | Remove assignments whose value is already guaranteed. |
+| `errorprone.ReturnValueIgnored` | error | correctness |  | Never ignore the return value of methods that have no side effects. |
+| `errorprone.CheckReturnValue` | error | correctness |  | Never ignore the return value of methods annotated @CheckReturnValue. |
 
 ## nullaway (1)
 
@@ -59,76 +82,7 @@
 |---|---|---|---|---|
 | `errorprone.NullAway` | error | null-safety | `java:S2259` | Annotate nullable values with @Nullable and never dereference possibly null values. |
 
-## checkstyle (64)
-
-| Id | Default | Category | Sonar | Agent text |
-|---|---|---|---|---|
-| `checkstyle.FinalLocalVariable` | error | style |  | Declare local variables final when they are never reassigned. |
-| `checkstyle.HiddenField` | error | correctness | `java:S1117` | Avoid local variables or parameters that shadow fields. |
-| `checkstyle.IllegalCatch` | error | correctness | `java:S1181` | Never catch Exception, RuntimeException or Throwable; catch the specific types. |
-| `checkstyle.IllegalThrows` | error | correctness | `java:S112` | Never throw Error, RuntimeException or Throwable; throw a specific exception type. |
-| `checkstyle.MagicNumber` | error | style |  | Extract magic numbers into named constants. |
-| `checkstyle.MultipleVariableDeclarations` | error | style | `java:S1659` | Declare one variable per statement. |
-| `checkstyle.ParameterAssignment` | error | correctness | `java:S1226` | Never reassign method parameters; copy into a local variable. |
-| `checkstyle.SimplifyBooleanExpression` | error | style | `java:S1125` | Avoid redundant boolean literals in conditions. |
-| `checkstyle.SimplifyBooleanReturn` | error | style |  | Return a boolean condition directly instead of branching to return literals. |
-| `checkstyle.StringLiteralEquality` | error | correctness | `java:S4973` | Never compare strings with == or !=; use equals. |
-| `checkstyle.EqualsHashCode` | error | correctness | `java:S1206` | Override hashCode whenever equals is overridden. |
-| `checkstyle.EqualsAvoidNull` | error | correctness |  | Call equals on the string literal or known non-null operand. |
-| `checkstyle.CovariantEquals` | error | correctness |  | Override equals(Object), never an overload taking a narrower type. |
-| `checkstyle.DefaultComesLast` | error | style |  | Place the default branch last in a switch. |
-| `checkstyle.EmptyStatement` | error | correctness |  | Never leave a stray semicolon as an empty statement. |
-| `checkstyle.FallThrough` | error | correctness | `java:S128` | End each switch case with break, return or throw, or mark intentional fall-through. |
-| `checkstyle.InnerAssignment` | error | style | `java:S1121` | Avoid assignments inside sub-expressions. |
-| `checkstyle.MissingSwitchDefault` | error | correctness | `java:S131` | Always provide a default branch in switch statements. |
-| `checkstyle.ModifiedControlVariable` | error | correctness |  | Never modify a for-loop control variable inside the loop body. |
-| `checkstyle.NestedForDepth` | error | complexity |  | Avoid nesting for loops more than one level deep. |
-| `checkstyle.NestedIfDepth` | error | complexity |  | Avoid nesting if statements more than two levels deep; use guard clauses. |
-| `checkstyle.NoClone` | error | design |  | Avoid Object.clone; use copy constructors or factory methods. |
-| `checkstyle.NoFinalizer` | error | design |  | Never implement finalize; use try-with-resources or Cleaner. |
-| `checkstyle.OneStatementPerLine` | error | style |  | Put one statement on each line. |
-| `checkstyle.PackageDeclaration` | error | correctness |  | Declare a package that matches the directory structure. |
-| `checkstyle.UnnecessaryParentheses` | error | style |  | Remove redundant parentheses. |
-| `checkstyle.AvoidDoubleBraceInitialization` | error | correctness |  | Never use double brace initialization; use factory methods such as List.of. |
-| `checkstyle.NeedBraces` | error | style |  | Always use braces around if, else, for, while and do bodies. |
-| `checkstyle.EmptyBlock` | error | correctness |  | Never leave a code block empty; add logic or a comment explaining why. |
-| `checkstyle.EmptyCatchBlock` | error | correctness |  | Never swallow exceptions silently; handle, log or rethrow them. |
-| `checkstyle.AvoidNestedBlocks` | error | style |  | Avoid standalone nested blocks. |
-| `checkstyle.FinalClass` | error | design |  | Declare classes with only private constructors final. |
-| `checkstyle.HideUtilityClassConstructor` | error | design | `java:S1118` | Give utility classes a private constructor. |
-| `checkstyle.InnerTypeLast` | error | style |  | Declare nested types after fields, constructors and methods. |
-| `checkstyle.MutableException` | error | design |  | Keep exception fields final so exceptions stay immutable. |
-| `checkstyle.OneTopLevelClass` | error | style |  | Declare exactly one top-level type per file. |
-| `checkstyle.ThrowsCount` | error | design |  | Declare at most two checked exceptions per method; wrap or group them. |
-| `checkstyle.VisibilityModifier` | error | design | `java:S1104` | Keep fields private and expose them through methods. |
-| `checkstyle.AvoidStarImport` | error | imports |  | Never use star imports; import each class explicitly. |
-| `checkstyle.IllegalImport` | error | imports |  | Never import internal sun.* packages. |
-| `checkstyle.RedundantImport` | error | imports |  | Remove duplicate and same-package imports. |
-| `checkstyle.UnusedImports` | error | imports | `java:S1128` | Remove unused imports. |
-| `checkstyle.MissingJavadocMethod` | error | documentation |  | Document every public method with Javadoc. |
-| `checkstyle.MissingJavadocType` | error | documentation |  | Document every public type with Javadoc. |
-| `checkstyle.JavadocMethod` | error | documentation |  | Keep Javadoc parameters, returns and throws in sync with the signature. |
-| `checkstyle.InvalidJavadocPosition` | error | documentation |  | Place Javadoc directly before the declaration it describes. |
-| `checkstyle.NonEmptyAtclauseDescription` | error | documentation |  | Give every Javadoc block tag a description. |
-| `checkstyle.SummaryJavadoc` | error | documentation |  | Write a meaningful first sentence in Javadoc, never a placeholder. |
-| `checkstyle.ModifierOrder` | error | style |  | Order modifiers as in the Java Language Specification. |
-| `checkstyle.RedundantModifier` | error | style |  | Remove modifiers that are implied, such as public on interface methods. |
-| `checkstyle.ConstantName` | error | naming |  | Name constants in UPPER_SNAKE_CASE. |
-| `checkstyle.LocalFinalVariableName` | error | naming |  | Name local variables in lowerCamelCase. |
-| `checkstyle.LocalVariableName` | error | naming |  | Name local variables in lowerCamelCase. |
-| `checkstyle.MemberName` | error | naming |  | Name instance fields in lowerCamelCase. |
-| `checkstyle.MethodName` | error | naming |  | Name methods in lowerCamelCase. |
-| `checkstyle.ParameterName` | error | naming |  | Name parameters in lowerCamelCase. |
-| `checkstyle.StaticVariableName` | error | naming |  | Name static fields in lowerCamelCase. |
-| `checkstyle.TypeName` | error | naming |  | Name types in UpperCamelCase. |
-| `checkstyle.MethodLength` | error | complexity |  | Keep methods short; split methods longer than 100 lines. |
-| `checkstyle.ParameterNumber` | error | complexity |  | Limit methods to seven parameters; introduce a parameter object. |
-| `checkstyle.FinalParameters` | error | style |  | Declare method and constructor parameters final. |
-| `checkstyle.ArrayTypeStyle` | error | style |  | Declare arrays Java-style as String[] args, never String args[]. |
-| `checkstyle.UpperEll` | error | style |  | Write long literals with an uppercase L suffix. |
-| `checkstyle.OuterTypeFilename` | error | correctness |  | Name the file after its outer type. |
-
-## pmd (104)
+## pmd (132)
 
 | Id | Default | Category | Sonar | Agent text |
 |---|---|---|---|---|
@@ -167,10 +121,10 @@
 | `pmd.SingularField` | error | design |  | Make fields that are used in one method local variables. |
 | `pmd.SignatureDeclareThrowsException` | error | design |  | Never declare throws Exception; declare the specific exception types. |
 | `pmd.UselessOverridingMethod` | error | design |  | Remove overriding methods that only call super. |
-| `pmd.InstantiableUtilityClass` | error | design |  | Make classes with only static members utility classes. |
+| `pmd.InstantiableUtilityClass` | error | design | `java:S1118` | Make classes with only static members utility classes. |
 | `pmd.NPathComplexity` | error | design |  | Keep NPath complexity of methods low. |
 | `pmd.AvoidDeeplyNestedIfStmts` | error | design |  | Avoid deeply nested if statements; use guard clauses. |
-| `pmd.AssignmentInOperand` | error | correctness |  | Avoid assignments inside operands. |
+| `pmd.AssignmentInOperand` | error | correctness | `java:S1121` | Avoid assignments inside operands. |
 | `pmd.AssignmentToNonFinalStatic` | error | correctness |  | Never assign static fields from constructors. |
 | `pmd.AvoidBranchingStatementAsLastInLoop` | error | correctness |  | Avoid break or continue as the last statement of a loop. |
 | `pmd.AvoidDuplicateLiterals` | error | correctness | `java:S1192` | Extract repeated string literals into constants. |
@@ -181,7 +135,7 @@
 | `pmd.DoNotCallGarbageCollectionExplicitly` | error | correctness |  | Never call System.gc or Runtime.gc. |
 | `pmd.EmptyCatchBlock` | error | correctness | `java:S108` | Never leave a catch block empty. |
 | `pmd.EqualsNull` | error | correctness |  | Never call equals(null). |
-| `pmd.ImplicitSwitchFallThrough` | error | correctness |  | Never rely on implicit switch fall-through. |
+| `pmd.ImplicitSwitchFallThrough` | error | correctness | `java:S128` | Never rely on implicit switch fall-through. |
 | `pmd.MisplacedNullCheck` | error | correctness |  | Check for null before dereferencing, not after. |
 | `pmd.ProperCloneImplementation` | error | correctness |  | Implement clone via super.clone. |
 | `pmd.ProperLogger` | error | correctness |  | Declare loggers as private static final with the class name. |
@@ -211,7 +165,7 @@
 | `pmd.StringToString` | error | performance |  | Never call toString on a String. |
 | `pmd.UseArraysAsList` | error | performance |  | Use Arrays.asList or List.of instead of manual array copy loops. |
 | `pmd.UselessStringValueOf` | error | performance |  | Remove String.valueOf inside string concatenation. |
-| `pmd.UnnecessaryImport` | error | style |  | Remove unused, duplicate and unnecessary imports. |
+| `pmd.UnnecessaryImport` | error | style | `java:S1128` | Remove unused, duplicate and unnecessary imports. |
 | `pmd.UnnecessaryFullyQualifiedName` | error | style |  | Import types instead of using fully qualified names. |
 | `pmd.UnnecessaryModifier` | error | style |  | Remove modifiers that are implied by context. |
 | `pmd.UnnecessaryReturn` | error | style |  | Remove return statements at the end of void methods. |
@@ -236,19 +190,36 @@
 | `pmd.LocalVariableNamingConventions` | error | style |  | Follow local variable naming conventions. |
 | `pmd.FormalParameterNamingConventions` | error | style |  | Follow parameter naming conventions. |
 | `pmd.PackageCase` | error | style |  | Use lowercase package names. |
+| `pmd.LocalVariableCouldBeFinal` | error | style |  | Declare local variables final when they are never reassigned. |
+| `pmd.MethodArgumentCouldBeFinal` | error | style |  | Declare method parameters final. |
+| `pmd.AvoidCatchingGenericException` | error | correctness |  | Never catch NullPointerException, RuntimeException or Exception; catch the specific types. |
+| `pmd.AvoidCatchingThrowable` | error | correctness | `java:S1181` | Never catch Throwable or Error; catch the specific types. |
+| `pmd.OneDeclarationPerLine` | error | style | `java:S1659` | Declare one variable per statement. |
+| `pmd.AvoidReassigningParameters` | error | correctness | `java:S1226` | Never reassign method parameters; copy into a local variable. |
+| `pmd.AvoidReassigningLoopVariables` | error | correctness |  | Never modify a loop control variable inside the loop body. |
+| `pmd.SimplifyBooleanExpressions` | error | style | `java:S1125` | Do not compare booleans against literals; simplify boolean expressions. |
+| `pmd.SimplifyBooleanReturns` | error | style |  | Return the boolean condition directly instead of if/else returning literals. |
+| `pmd.UseEqualsToCompareStrings` | error | correctness | `java:S4973` | Compare strings with equals(), never with == or !=. |
+| `pmd.OverrideBothEqualsAndHashcode` | error | correctness | `java:S1206` | Override equals() and hashCode() together. |
+| `pmd.DefaultLabelNotLastInSwitch` | error | style |  | Put the default label last in a switch. |
+| `pmd.NonExhaustiveSwitch` | error | correctness | `java:S131` | Give every switch statement a default branch. |
+| `pmd.DoubleBraceInitialization` | error | correctness |  | Never use double brace initialization; build the collection explicitly. |
+| `pmd.UnnecessaryBlock` | error | style |  | Do not use nested blocks without a purpose. |
+| `pmd.FieldNamingConventions` | error | naming |  | Follow field naming conventions: UPPER_SNAKE constants, camelCase fields. |
+| `pmd.CommentRequired` | error | documentation |  | Write Javadoc for every public or protected method and every type. |
+| `pmd.DanglingJavadoc` | error | documentation |  | Place Javadoc directly before the declaration it documents. |
+| `pmd.ModifierOrder` | error | style |  | Order modifiers as the JLS recommends. |
+| `pmd.ExcessiveParameterList` | error | complexity |  | Keep parameter lists short; group related parameters into a type. |
+| `pmd.NcssCount` | error | complexity |  | Keep methods and classes short (non-commenting source statements). |
+| `pmd.AvoidThrowingRawExceptionTypes` | error | correctness | `java:S112` | Never throw Error, RuntimeException or Throwable; throw a specific exception type. |
+| `pmd.SuspiciousEqualsMethodName` | error | correctness |  | Never name a method equals() with a signature that does not override Object.equals(Object). |
+| `pmd.AvoidCallingFinalize` | error | design |  | Never call finalize() explicitly. |
+| `pmd.LongLiteralEndingWithLowercaseL` | error | style |  | Write long literals with an uppercase L suffix. |
+| `pmd.DontImportSun` | error | imports |  | Never import sun.* packages. |
+| `pmd.HardCodedCryptoKey` | error | security |  | Never hard-code cryptographic keys. |
+| `pmd.InsecureCryptoIv` | error | security |  | Never use a hard-coded or static initialization vector. |
 
-## spotbugs (6)
-
-| Id | Default | Category | Sonar | Agent text |
-|---|---|---|---|---|
-| `spotbugs.CORRECTNESS` | error | correctness |  | Fix SpotBugs correctness bugs: they are almost always real defects. |
-| `spotbugs.BAD_PRACTICE` | error | correctness |  | Avoid SpotBugs bad-practice patterns such as ignoring return values or violating equals contracts. |
-| `spotbugs.MT_CORRECTNESS` | error | concurrency |  | Fix SpotBugs multithreading bugs: unsynchronized access, wait without loop, inconsistent locking. |
-| `spotbugs.PERFORMANCE` | error | performance |  | Avoid SpotBugs performance anti-patterns such as needless boxing and inefficient collection use. |
-| `spotbugs.SECURITY` | error | security |  | Fix SpotBugs security findings such as SQL string building, weak crypto and path traversal. |
-| `spotbugs.STYLE` | warn | style |  | Review SpotBugs dodgy-code findings such as redundant null checks and dead stores. |
-
-## archunit (12)
+## archunit (15)
 
 | Id | Default | Category | Sonar | Agent text |
 |---|---|---|---|---|
@@ -264,4 +235,7 @@
 | `archunit.spring.NoMockBeanInUnitTests` | error | architecture |  | Use plain Mockito mocks in unit tests; reserve @MockBean for slice tests. |
 | `archunit.spring.ServiceNaming` | error | architecture |  | Name @Service classes with a Service suffix. |
 | `archunit.spring.RepositoryNaming` | error | architecture |  | Name repository interfaces with a Repository suffix. |
+| `archunit.FieldsMustBePrivate` | error | architecture | `java:S1104` | Keep non-static-final fields private. |
+| `archunit.NoCloneOverride` | error | architecture |  | Never override clone(); use copy constructors or factories. |
+| `archunit.ImmutableExceptions` | error | architecture |  | Declare all fields of exception classes final. |
 

@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import io.github.wraithyy.javacite.example.repository.GreetingRepository;
 import org.junit.jupiter.api.Test;
 
+/** Unit tests for {@link GreetingService}. */
 class GreetingServiceTest {
 
     private final GreetingService service = new GreetingService(new GreetingRepository());

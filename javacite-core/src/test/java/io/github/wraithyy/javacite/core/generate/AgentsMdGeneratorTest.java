@@ -37,13 +37,13 @@ class AgentsMdGeneratorTest {
     void optedOutRuleDisappearsAndWarnIsSuffixed() {
         ResolvedRules r = ResolvedRules.of(ConfigLoader.load("""
                 rules:
-                  checkstyle.FinalLocalVariable: off
-                  checkstyle.IllegalCatch: warn
+                  pmd.LocalVariableCouldBeFinal: off
+                  pmd.AvoidCatchingThrowable: warn
                 """));
         String block = AgentsMdGenerator.render(r, BuildTool.GRADLE, false);
 
         assertThat(block).doesNotContain("Declare local variables final when they are never reassigned.");
-        assertThat(block).contains("- Never catch Exception, RuntimeException or Throwable; catch the specific types. (warning)");
+        assertThat(block).contains("- Never catch Throwable or Error; catch the specific types. (warning)");
     }
 
     @Test

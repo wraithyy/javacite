@@ -164,17 +164,4 @@ class JavaciteInitFunctionalTest {
         assertThat(Files.readString(dir.resolve("build/javacite/sonar-profile.xml")))
                 .contains("<rule>");
     }
-
-    @Test
-    void sonarWiredOnlyWithEnvironment() {
-        BuildResult without = runner("tasks", "--all").build();
-        assertThat(without.getOutput()).doesNotContain("javaciteSonarProperties");
-
-        BuildResult with = runner(Map.of("SONAR_HOST_URL", "http://localhost:9000"), "javaciteSonarProperties", "tasks", "--all")
-                .build();
-        assertThat(with.getOutput())
-                .containsPattern("sonar\\.java\\.checkstyle\\.reportPaths=/\\S+/build/reports/checkstyle/main\\.xml")
-                .contains("sonar.java.source=17")
-                .containsPattern("(?m)^sonar - ");
-    }
 }

@@ -6,7 +6,7 @@ A small Spring Boot 3.5 web app (controller, service, repository) that applies t
 
 ## What it demonstrates
 
-- One plugin line wires Spotless, Error Prone + NullAway, Checkstyle, PMD, SpotBugs, JaCoCo (min 0.8
+- One plugin line wires Spotless, Error Prone + NullAway, PMD, JaCoCo (min 0.8
   line coverage) and ArchUnit; `javacite.yml` holds the defaults (nothing is opted out).
 - ArchUnit rules from `javacite-archunit` run in `ArchitectureTest` (no field injection, no package
   cycles, Spring layering).

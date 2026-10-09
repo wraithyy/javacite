@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 # Validates the SonarQube integration end to end against a local SonarQube Community container
-# (plan tasks 7.1 and 7.2). Requires a running Docker daemon, curl and the JDK 21 build JVM.
+# (plan tasks 7.1 and 7.2). Requires a running Docker daemon (Linux, or macOS with Docker Desktop/Rancher Desktop/colima), curl and the JDK 21 build JVM.
 #
 # What it checks:
-#   1. examples/gradle-spring: `./gradlew check javaciteSonarProfile sonar` with SONAR_HOST_URL set,
-#      so the plugin wires the org.sonarqube plugin and the four external report paths.
+#   1. examples/gradle-spring: `./gradlew check javaciteSonarProfile javaciteSonarProperties`, then the official
+#      sonarsource/sonar-scanner-cli container analyses it with the generated sonar-project.properties.
 #   2. The generated quality profile XML restores through POST api/qualityprofiles/restore.
-#   3. The Sonar web API reports external issues (checkstyle/pmd/spotbugs) and coverage for the project.
+#   3. The Sonar web API reports external PMD issues (external_pmd) and coverage for the project.
 #
 # Usage: scripts/sonar-validate.sh [--keep]   (--keep leaves the container running)
 set -eu
@@ -53,30 +53,50 @@ if ! curl -fsS -H "$(basic "admin:admin")" -X POST "$HOST/api/users/change_passw
 fi
 
 log "creating analysis token"
-TOKEN=$(curl -fsS -H "$(basic "admin:$ADMIN_PASS")" -X POST "$HOST/api/user_tokens/generate?name=javacite-$(date +%s)" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
-[ -n "$TOKEN" ] || { echo "could not obtain a token" >&2; exit 4; }
+export SONAR_HOST_URL=$HOST
+export SONAR_TOKEN; SONAR_TOKEN=$(curl -fsS -H "$(basic "admin:$ADMIN_PASS")" -X POST "$HOST/api/user_tokens/generate?name=javacite-$(date +%s)" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+[ -n "$SONAR_TOKEN" ] || { echo "could not obtain a token" >&2; exit 4; }
 
-log "analysing examples/gradle-spring"
+log "building examples/gradle-spring (reports, profile, scanner properties)"
 cd "$EXAMPLE"
-SONAR_HOST_URL=$HOST SONAR_TOKEN=$TOKEN ./gradlew --console=plain check javaciteSonarProfile sonar \
-    -Dsonar.projectKey=$PROJECT_KEY -Dsonar.projectName=$PROJECT_KEY
+./gradlew --console=plain check javaciteSonarProfile javaciteSonarProperties
+
+log "running sonar-scanner-cli container"
+# Project paths in the properties file are relative to sonar.projectBaseDir, but the PMD XML itself holds absolute host
+# file names: the project is therefore mounted at its host path (not /usr/src), else "No PMD issue will be imported".
+# --network host does not reach localhost from Docker on macOS (Rancher Desktop, colima, Docker Desktop).
+if [ "$(uname -s)" = "Darwin" ]; then
+    NET_ARGS=""
+    SCANNER_HOST=http://host.docker.internal:9000
+else
+    NET_ARGS="--network host"
+    SCANNER_HOST=$HOST
+fi
+# shellcheck disable=SC2086
+# The Gradle cache is mounted read-only at its host path: sonar.java.libraries jars live outside the project, so they stay absolute.
+docker run --rm $NET_ARGS -v "$EXAMPLE":"$EXAMPLE" -v "$HOME/.gradle":"$HOME/.gradle":ro -e SONAR_HOST_URL -e SONAR_TOKEN \
+    sonarsource/sonar-scanner-cli \
+    -Dproject.settings="$EXAMPLE"/build/javacite/sonar-project.properties \
+    -Dsonar.projectBaseDir="$EXAMPLE" \
+    -Dsonar.projectKey=$PROJECT_KEY -Dsonar.projectName=$PROJECT_KEY \
+    -Dsonar.host.url=$SCANNER_HOST
 
 log "restoring generated quality profile"
 PROFILE="$EXAMPLE/build/javacite/sonar-profile.xml"
 [ -f "$PROFILE" ] || { echo "missing $PROFILE" >&2; exit 5; }
-curl -fsS -H "Authorization: Bearer $TOKEN" -X POST -F "backup=@$PROFILE" "$HOST/api/qualityprofiles/restore"
+curl -fsS -H "Authorization: Bearer $SONAR_TOKEN" -X POST -F "backup=@$PROFILE" "$HOST/api/qualityprofiles/restore"
 echo
 
 log "waiting for background task"
 sleep 10
-until curl -fsS -H "Authorization: Bearer $TOKEN" "$HOST/api/ce/component?component=$PROJECT_KEY" | grep -q '"status":"SUCCESS"'; do sleep 5; done
+until curl -fsS -H "Authorization: Bearer $SONAR_TOKEN" "$HOST/api/ce/component?component=$PROJECT_KEY" | grep -q '"status":"SUCCESS"'; do sleep 5; done
 
 log "external issues by rule repository"
-curl -fsS -H "Authorization: Bearer $TOKEN" "$HOST/api/issues/search?componentKeys=$PROJECT_KEY&ps=1&facets=rules" \
-    | tr ',' '\n' | grep -o '"val":"external_[a-z]*:[^"]*"' | sort | uniq -c | sort -rn | head -20
+curl -fsS -H "Authorization: Bearer $SONAR_TOKEN" "$HOST/api/issues/search?componentKeys=$PROJECT_KEY&ps=1&facets=rules" \
+    | tr ',' '\n' | grep -o '"val":"external_pmd:[^"]*"' | sort | uniq -c | sort -rn | head -20
 
 log "coverage measure"
-curl -fsS -H "Authorization: Bearer $TOKEN" "$HOST/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,line_coverage"
+curl -fsS -H "Authorization: Bearer $SONAR_TOKEN" "$HOST/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,line_coverage"
 echo
 
 if [ "$KEEP" != "--keep" ]; then

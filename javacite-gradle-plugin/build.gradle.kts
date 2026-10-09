@@ -11,9 +11,7 @@ dependencies {
     // Applied programmatically by later wiring tasks via pluginManager.apply(...)
     implementation(libs.spotless.plugin)
     implementation(libs.errorprone.plugin)
-    implementation(libs.spotbugs.plugin)
     implementation(libs.dependency.check.plugin)
-    implementation(libs.sonar.plugin)
 
     "functionalTestImplementation"(gradleTestKit())
     "functionalTestImplementation"(platform(libs.junit.bom))
@@ -35,7 +33,7 @@ gradlePlugin {
             implementationClass = "io.github.wraithyy.javacite.gradle.JavacitePlugin"
             displayName = "javacite"
             description = "Strict, opt-out Java guardrails for agent-driven development from one javacite.yml"
-            tags = listOf("java", "quality", "static-analysis", "errorprone", "spotbugs", "ai")
+            tags = listOf("java", "quality", "static-analysis", "errorprone", "pmd", "ai")
         }
     }
 }
@@ -64,11 +62,8 @@ val generateJavaciteVersions = tasks.register("generateJavaciteVersions") {
         "ERRORPRONE_CORE" to libs.versions.errorprone.core.get(),
         "NULLAWAY" to libs.versions.nullaway.get(),
         "JSPECIFY" to libs.versions.jspecify.get(),
-        "CHECKSTYLE" to libs.versions.checkstyle.asProvider().get(),
         "PMD" to libs.versions.pmd.asProvider().get(),
-        "SPOTBUGS" to libs.versions.spotbugs.asProvider().get(),
         "JACOCO" to libs.versions.jacoco.get(),
-        "COMMONS_LANG3" to libs.versions.commons.lang3.get(),
     )
     inputs.property("versions", versions)
     outputs.dir(outDir)

@@ -1,470 +1,6 @@
 # Single source of truth for every javacite rule. See the plan for the schema.
 # Sonar keys are listed only where the sonar-java rule is known.
 
-- id: checkstyle.FinalLocalVariable
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck
-  default: error
-  category: style
-  agent: "Declare local variables final when they are never reassigned."
-
-- id: checkstyle.HiddenField
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck
-  default: error
-  category: correctness
-  sonar: [java:S1117]
-  agent: "Avoid local variables or parameters that shadow fields."
-  properties: { ignoreConstructorParameter: true, ignoreSetter: true, setterCanReturnItsClass: true }
-
-- id: checkstyle.IllegalCatch
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.IllegalCatchCheck
-  default: error
-  category: correctness
-  sonar: [java:S1181]
-  agent: "Never catch Exception, RuntimeException or Throwable; catch the specific types."
-
-- id: checkstyle.IllegalThrows
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.IllegalThrowsCheck
-  default: error
-  category: correctness
-  sonar: [java:S112]
-  agent: "Never throw Error, RuntimeException or Throwable; throw a specific exception type."
-
-- id: checkstyle.MagicNumber
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck
-  default: error
-  category: style
-  agent: "Extract magic numbers into named constants."
-
-- id: checkstyle.MultipleVariableDeclarations
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.MultipleVariableDeclarationsCheck
-  default: error
-  category: style
-  sonar: [java:S1659]
-  agent: "Declare one variable per statement."
-
-- id: checkstyle.ParameterAssignment
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.ParameterAssignmentCheck
-  default: error
-  category: correctness
-  sonar: [java:S1226]
-  agent: "Never reassign method parameters; copy into a local variable."
-
-- id: checkstyle.SimplifyBooleanExpression
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanExpressionCheck
-  default: error
-  category: style
-  sonar: [java:S1125]
-  agent: "Avoid redundant boolean literals in conditions."
-
-- id: checkstyle.SimplifyBooleanReturn
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanReturnCheck
-  default: error
-  category: style
-  agent: "Return a boolean condition directly instead of branching to return literals."
-
-- id: checkstyle.StringLiteralEquality
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.StringLiteralEqualityCheck
-  default: error
-  category: correctness
-  sonar: [java:S4973]
-  agent: "Never compare strings with == or !=; use equals."
-
-- id: checkstyle.EqualsHashCode
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.EqualsHashCodeCheck
-  default: error
-  category: correctness
-  sonar: [java:S1206]
-  agent: "Override hashCode whenever equals is overridden."
-
-- id: checkstyle.EqualsAvoidNull
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.EqualsAvoidNullCheck
-  default: error
-  category: correctness
-  agent: "Call equals on the string literal or known non-null operand."
-
-- id: checkstyle.CovariantEquals
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.CovariantEqualsCheck
-  default: error
-  category: correctness
-  agent: "Override equals(Object), never an overload taking a narrower type."
-
-- id: checkstyle.DefaultComesLast
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.DefaultComesLastCheck
-  default: error
-  category: style
-  agent: "Place the default branch last in a switch."
-
-- id: checkstyle.EmptyStatement
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.EmptyStatementCheck
-  default: error
-  category: correctness
-  agent: "Never leave a stray semicolon as an empty statement."
-
-- id: checkstyle.FallThrough
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.FallThroughCheck
-  default: error
-  category: correctness
-  sonar: [java:S128]
-  agent: "End each switch case with break, return or throw, or mark intentional fall-through."
-
-- id: checkstyle.InnerAssignment
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck
-  default: error
-  category: style
-  sonar: [java:S1121]
-  agent: "Avoid assignments inside sub-expressions."
-
-- id: checkstyle.MissingSwitchDefault
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.MissingSwitchDefaultCheck
-  default: error
-  category: correctness
-  sonar: [java:S131]
-  agent: "Always provide a default branch in switch statements."
-
-- id: checkstyle.ModifiedControlVariable
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariableCheck
-  default: error
-  category: correctness
-  agent: "Never modify a for-loop control variable inside the loop body."
-
-- id: checkstyle.NestedForDepth
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.NestedForDepthCheck
-  default: error
-  category: complexity
-  agent: "Avoid nesting for loops more than one level deep."
-
-- id: checkstyle.NestedIfDepth
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.NestedIfDepthCheck
-  default: error
-  category: complexity
-  agent: "Avoid nesting if statements more than two levels deep; use guard clauses."
-
-- id: checkstyle.NoClone
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.NoCloneCheck
-  default: error
-  category: design
-  agent: "Avoid Object.clone; use copy constructors or factory methods."
-
-- id: checkstyle.NoFinalizer
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.NoFinalizerCheck
-  default: error
-  category: design
-  agent: "Never implement finalize; use try-with-resources or Cleaner."
-
-- id: checkstyle.OneStatementPerLine
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.OneStatementPerLineCheck
-  default: error
-  category: style
-  agent: "Put one statement on each line."
-
-- id: checkstyle.PackageDeclaration
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.PackageDeclarationCheck
-  default: error
-  category: correctness
-  agent: "Declare a package that matches the directory structure."
-
-- id: checkstyle.UnnecessaryParentheses
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.UnnecessaryParenthesesCheck
-  default: error
-  category: style
-  agent: "Remove redundant parentheses."
-
-- id: checkstyle.AvoidDoubleBraceInitialization
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.coding.AvoidDoubleBraceInitializationCheck
-  default: error
-  category: correctness
-  agent: "Never use double brace initialization; use factory methods such as List.of."
-
-- id: checkstyle.NeedBraces
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck
-  default: error
-  category: style
-  agent: "Always use braces around if, else, for, while and do bodies."
-
-- id: checkstyle.EmptyBlock
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.blocks.EmptyBlockCheck
-  default: error
-  category: correctness
-  agent: "Never leave a code block empty; add logic or a comment explaining why."
-
-- id: checkstyle.EmptyCatchBlock
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.blocks.EmptyCatchBlockCheck
-  default: error
-  category: correctness
-  agent: "Never swallow exceptions silently; handle, log or rethrow them."
-
-- id: checkstyle.AvoidNestedBlocks
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.blocks.AvoidNestedBlocksCheck
-  default: error
-  category: style
-  agent: "Avoid standalone nested blocks."
-
-- id: checkstyle.FinalClass
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck
-  default: error
-  category: design
-  agent: "Declare classes with only private constructors final."
-
-- id: checkstyle.HideUtilityClassConstructor
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.HideUtilityClassConstructorCheck
-  default: error
-  category: design
-  sonar: [java:S1118]
-  agent: "Give utility classes a private constructor."
-  properties: { ignoreAnnotatedBy: "SpringBootApplication, Configuration" }
-
-- id: checkstyle.InnerTypeLast
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.InnerTypeLastCheck
-  default: error
-  category: style
-  agent: "Declare nested types after fields, constructors and methods."
-
-- id: checkstyle.MutableException
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.MutableExceptionCheck
-  default: error
-  category: design
-  agent: "Keep exception fields final so exceptions stay immutable."
-
-- id: checkstyle.OneTopLevelClass
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.OneTopLevelClassCheck
-  default: error
-  category: style
-  agent: "Declare exactly one top-level type per file."
-
-- id: checkstyle.ThrowsCount
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.ThrowsCountCheck
-  default: error
-  category: design
-  agent: "Declare at most two checked exceptions per method; wrap or group them."
-
-- id: checkstyle.VisibilityModifier
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck
-  default: error
-  category: design
-  sonar: [java:S1104]
-  agent: "Keep fields private and expose them through methods."
-
-- id: checkstyle.AvoidStarImport
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck
-  default: error
-  category: imports
-  agent: "Never use star imports; import each class explicitly."
-
-- id: checkstyle.IllegalImport
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.imports.IllegalImportCheck
-  default: error
-  category: imports
-  agent: "Never import internal sun.* packages."
-
-- id: checkstyle.RedundantImport
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.imports.RedundantImportCheck
-  default: error
-  category: imports
-  agent: "Remove duplicate and same-package imports."
-
-- id: checkstyle.UnusedImports
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck
-  default: error
-  category: imports
-  sonar: [java:S1128]
-  agent: "Remove unused imports."
-
-- id: checkstyle.MissingJavadocMethod
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck
-  default: error
-  category: documentation
-  agent: "Document every public method with Javadoc."
-
-- id: checkstyle.MissingJavadocType
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocTypeCheck
-  default: error
-  category: documentation
-  agent: "Document every public type with Javadoc."
-
-- id: checkstyle.JavadocMethod
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck
-  default: error
-  category: documentation
-  agent: "Keep Javadoc parameters, returns and throws in sync with the signature."
-
-- id: checkstyle.InvalidJavadocPosition
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.InvalidJavadocPositionCheck
-  default: error
-  category: documentation
-  agent: "Place Javadoc directly before the declaration it describes."
-
-- id: checkstyle.NonEmptyAtclauseDescription
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.NonEmptyAtclauseDescriptionCheck
-  default: error
-  category: documentation
-  agent: "Give every Javadoc block tag a description."
-
-- id: checkstyle.SummaryJavadoc
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.javadoc.SummaryJavadocCheck
-  default: error
-  category: documentation
-  agent: "Write a meaningful first sentence in Javadoc, never a placeholder."
-
-- id: checkstyle.ModifierOrder
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrderCheck
-  default: error
-  category: style
-  agent: "Order modifiers as in the Java Language Specification."
-
-- id: checkstyle.RedundantModifier
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.modifier.RedundantModifierCheck
-  default: error
-  category: style
-  agent: "Remove modifiers that are implied, such as public on interface methods."
-
-- id: checkstyle.ConstantName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck
-  default: error
-  category: naming
-  agent: "Name constants in UPPER_SNAKE_CASE."
-
-- id: checkstyle.LocalFinalVariableName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.LocalFinalVariableNameCheck
-  default: error
-  category: naming
-  agent: "Name local variables in lowerCamelCase."
-
-- id: checkstyle.LocalVariableName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck
-  default: error
-  category: naming
-  agent: "Name local variables in lowerCamelCase."
-
-- id: checkstyle.MemberName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.MemberNameCheck
-  default: error
-  category: naming
-  agent: "Name instance fields in lowerCamelCase."
-
-- id: checkstyle.MethodName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck
-  default: error
-  category: naming
-  agent: "Name methods in lowerCamelCase."
-
-- id: checkstyle.ParameterName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck
-  default: error
-  category: naming
-  agent: "Name parameters in lowerCamelCase."
-
-- id: checkstyle.StaticVariableName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableNameCheck
-  default: error
-  category: naming
-  agent: "Name static fields in lowerCamelCase."
-
-- id: checkstyle.TypeName
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.naming.TypeNameCheck
-  default: error
-  category: naming
-  agent: "Name types in UpperCamelCase."
-
-- id: checkstyle.MethodLength
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.sizes.MethodLengthCheck
-  default: error
-  category: complexity
-  agent: "Keep methods short; split methods longer than 100 lines."
-
-- id: checkstyle.ParameterNumber
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.sizes.ParameterNumberCheck
-  default: error
-  category: complexity
-  agent: "Limit methods to seven parameters; introduce a parameter object."
-
-- id: checkstyle.FinalParameters
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck
-  default: error
-  category: style
-  agent: "Declare method and constructor parameters final."
-
-- id: checkstyle.ArrayTypeStyle
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.ArrayTypeStyleCheck
-  default: error
-  category: style
-  agent: "Declare arrays Java-style as String[] args, never String args[]."
-
-- id: checkstyle.UpperEll
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.UpperEllCheck
-  default: error
-  category: style
-  agent: "Write long literals with an uppercase L suffix."
-
-- id: checkstyle.OuterTypeFilename
-  tool: checkstyle
-  native: com.puppycrawl.tools.checkstyle.checks.OuterTypeFilenameCheck
-  default: error
-  category: correctness
-  agent: "Name the file after its outer type."
-
 - id: pmd.AvoidPrintStackTrace
   tool: pmd
   native: category/java/bestpractices.xml/AvoidPrintStackTrace
@@ -724,6 +260,7 @@
   native: category/java/design.xml/InstantiableUtilityClass
   default: error
   category: design
+  sonar: [java:S1118]
   agent: "Make classes with only static members utility classes."
 
 - id: pmd.NPathComplexity
@@ -745,6 +282,7 @@
   native: category/java/errorprone.xml/AssignmentInOperand
   default: error
   category: correctness
+  sonar: [java:S1121]
   agent: "Avoid assignments inside operands."
 
 - id: pmd.AssignmentToNonFinalStatic
@@ -825,6 +363,7 @@
   native: category/java/errorprone.xml/ImplicitSwitchFallThrough
   default: error
   category: correctness
+  sonar: [java:S128]
   agent: "Never rely on implicit switch fall-through."
 
 - id: pmd.MisplacedNullCheck
@@ -1036,6 +575,7 @@
   native: category/java/codestyle.xml/UnnecessaryImport
   default: error
   category: style
+  sonar: [java:S1128]
   agent: "Remove unused, duplicate and unnecessary imports."
 
 - id: pmd.UnnecessaryFullyQualifiedName
@@ -1516,48 +1056,6 @@
   sonar: [java:S2259]
   agent: "Annotate nullable values with @Nullable and never dereference possibly null values."
 
-- id: spotbugs.CORRECTNESS
-  tool: spotbugs
-  native: CORRECTNESS
-  default: error
-  category: correctness
-  agent: "Fix SpotBugs correctness bugs: they are almost always real defects."
-
-- id: spotbugs.BAD_PRACTICE
-  tool: spotbugs
-  native: BAD_PRACTICE
-  default: error
-  category: correctness
-  agent: "Avoid SpotBugs bad-practice patterns such as ignoring return values or violating equals contracts."
-
-- id: spotbugs.MT_CORRECTNESS
-  tool: spotbugs
-  native: MT_CORRECTNESS
-  default: error
-  category: concurrency
-  agent: "Fix SpotBugs multithreading bugs: unsynchronized access, wait without loop, inconsistent locking."
-
-- id: spotbugs.PERFORMANCE
-  tool: spotbugs
-  native: PERFORMANCE
-  default: error
-  category: performance
-  agent: "Avoid SpotBugs performance anti-patterns such as needless boxing and inefficient collection use."
-
-- id: spotbugs.SECURITY
-  tool: spotbugs
-  native: SECURITY
-  default: error
-  category: security
-  agent: "Fix SpotBugs security findings such as SQL string building, weak crypto and path traversal."
-
-- id: spotbugs.STYLE
-  tool: spotbugs
-  native: STYLE
-  default: warn
-  category: style
-  agent: "Review SpotBugs dodgy-code findings such as redundant null checks and dead stores."
-
 - id: archunit.NoFieldInjection
   tool: archunit
   native: NO_FIELD_INJECTION
@@ -1643,3 +1141,392 @@
   default: error
   category: architecture
   agent: "Name repository interfaces with a Repository suffix."
+
+- id: pmd.LocalVariableCouldBeFinal
+  tool: pmd
+  native: category/java/codestyle.xml/LocalVariableCouldBeFinal
+  default: error
+  category: style
+  agent: "Declare local variables final when they are never reassigned."
+
+- id: pmd.MethodArgumentCouldBeFinal
+  tool: pmd
+  native: category/java/codestyle.xml/MethodArgumentCouldBeFinal
+  default: error
+  category: style
+  agent: "Declare method parameters final."
+
+- id: pmd.AvoidCatchingGenericException
+  tool: pmd
+  native: category/java/errorprone.xml/AvoidCatchingGenericException
+  default: error
+  category: correctness
+  agent: "Never catch NullPointerException, RuntimeException or Exception; catch the specific types."
+
+- id: pmd.AvoidCatchingThrowable
+  tool: pmd
+  native: category/java/errorprone.xml/AvoidCatchingThrowable
+  default: error
+  category: correctness
+  sonar: [java:S1181]
+  agent: "Never catch Throwable or Error; catch the specific types."
+
+- id: pmd.OneDeclarationPerLine
+  tool: pmd
+  native: category/java/bestpractices.xml/OneDeclarationPerLine
+  default: error
+  category: style
+  sonar: [java:S1659]
+  agent: "Declare one variable per statement."
+
+- id: pmd.AvoidReassigningParameters
+  tool: pmd
+  native: category/java/bestpractices.xml/AvoidReassigningParameters
+  default: error
+  category: correctness
+  sonar: [java:S1226]
+  agent: "Never reassign method parameters; copy into a local variable."
+
+- id: pmd.AvoidReassigningLoopVariables
+  tool: pmd
+  native: category/java/bestpractices.xml/AvoidReassigningLoopVariables
+  default: error
+  category: correctness
+  agent: "Never modify a loop control variable inside the loop body."
+
+- id: pmd.SimplifyBooleanExpressions
+  tool: pmd
+  native: category/java/design.xml/SimplifyBooleanExpressions
+  default: error
+  category: style
+  sonar: [java:S1125]
+  agent: "Do not compare booleans against literals; simplify boolean expressions."
+
+- id: pmd.SimplifyBooleanReturns
+  tool: pmd
+  native: category/java/design.xml/SimplifyBooleanReturns
+  default: error
+  category: style
+  agent: "Return the boolean condition directly instead of if/else returning literals."
+
+- id: pmd.UseEqualsToCompareStrings
+  tool: pmd
+  native: category/java/errorprone.xml/UseEqualsToCompareStrings
+  default: error
+  category: correctness
+  sonar: [java:S4973]
+  agent: "Compare strings with equals(), never with == or !=."
+
+- id: pmd.OverrideBothEqualsAndHashcode
+  tool: pmd
+  native: category/java/errorprone.xml/OverrideBothEqualsAndHashcode
+  default: error
+  category: correctness
+  sonar: [java:S1206]
+  agent: "Override equals() and hashCode() together."
+
+- id: pmd.DefaultLabelNotLastInSwitch
+  tool: pmd
+  native: category/java/bestpractices.xml/DefaultLabelNotLastInSwitch
+  default: error
+  category: style
+  agent: "Put the default label last in a switch."
+
+- id: pmd.NonExhaustiveSwitch
+  tool: pmd
+  native: category/java/bestpractices.xml/NonExhaustiveSwitch
+  default: error
+  category: correctness
+  sonar: [java:S131]
+  agent: "Give every switch statement a default branch."
+
+- id: pmd.DoubleBraceInitialization
+  tool: pmd
+  native: category/java/bestpractices.xml/DoubleBraceInitialization
+  default: error
+  category: correctness
+  agent: "Never use double brace initialization; build the collection explicitly."
+
+- id: pmd.UnnecessaryBlock
+  tool: pmd
+  native: category/java/codestyle.xml/UnnecessaryBlock
+  default: error
+  category: style
+  agent: "Do not use nested blocks without a purpose."
+
+- id: pmd.FieldNamingConventions
+  tool: pmd
+  native: category/java/codestyle.xml/FieldNamingConventions
+  default: error
+  category: naming
+  agent: "Follow field naming conventions: UPPER_SNAKE constants, camelCase fields."
+
+- id: pmd.CommentRequired
+  tool: pmd
+  native: category/java/documentation.xml/CommentRequired
+  default: error
+  category: documentation
+  agent: "Write Javadoc for every public or protected method and every type."
+  properties: { methodWithOverrideCommentRequirement: ignored, accessorCommentRequirement: ignored, fieldCommentRequirement: ignored, publicMethodCommentRequirement: required, protectedMethodCommentRequirement: required, classCommentRequirement: required, enumCommentRequirement: required, serialVersionUIDCommentRequired: ignored, serialPersistentFieldsCommentRequired: ignored }
+
+- id: pmd.DanglingJavadoc
+  tool: pmd
+  native: category/java/documentation.xml/DanglingJavadoc
+  default: error
+  category: documentation
+  agent: "Place Javadoc directly before the declaration it documents."
+
+- id: pmd.ModifierOrder
+  tool: pmd
+  native: category/java/codestyle.xml/ModifierOrder
+  default: error
+  category: style
+  agent: "Order modifiers as the JLS recommends."
+
+- id: pmd.ExcessiveParameterList
+  tool: pmd
+  native: category/java/design.xml/ExcessiveParameterList
+  default: error
+  category: complexity
+  agent: "Keep parameter lists short; group related parameters into a type."
+
+- id: pmd.NcssCount
+  tool: pmd
+  native: category/java/design.xml/NcssCount
+  default: error
+  category: complexity
+  agent: "Keep methods and classes short (non-commenting source statements)."
+
+- id: pmd.AvoidThrowingRawExceptionTypes
+  tool: pmd
+  native: category/java/design.xml/AvoidThrowingRawExceptionTypes
+  default: error
+  category: correctness
+  sonar: [java:S112]
+  agent: "Never throw Error, RuntimeException or Throwable; throw a specific exception type."
+
+- id: pmd.SuspiciousEqualsMethodName
+  tool: pmd
+  native: category/java/errorprone.xml/SuspiciousEqualsMethodName
+  default: error
+  category: correctness
+  agent: "Never name a method equals() with a signature that does not override Object.equals(Object)."
+
+- id: pmd.AvoidCallingFinalize
+  tool: pmd
+  native: category/java/errorprone.xml/AvoidCallingFinalize
+  default: error
+  category: design
+  agent: "Never call finalize() explicitly."
+
+- id: pmd.LongLiteralEndingWithLowercaseL
+  tool: pmd
+  native: category/java/errorprone.xml/LongLiteralEndingWithLowercaseL
+  default: error
+  category: style
+  agent: "Write long literals with an uppercase L suffix."
+
+- id: pmd.DontImportSun
+  tool: pmd
+  native: category/java/errorprone.xml/DontImportSun
+  default: error
+  category: imports
+  agent: "Never import sun.* packages."
+
+- id: pmd.HardCodedCryptoKey
+  tool: pmd
+  native: category/java/security.xml/HardCodedCryptoKey
+  default: error
+  category: security
+  agent: "Never hard-code cryptographic keys."
+
+- id: pmd.InsecureCryptoIv
+  tool: pmd
+  native: category/java/security.xml/InsecureCryptoIv
+  default: error
+  category: security
+  agent: "Never use a hard-coded or static initialization vector."
+
+- id: errorprone.HidingField
+  tool: errorprone
+  native: HidingField
+  default: error
+  category: correctness
+  sonar: [java:S1117]
+  agent: "Avoid fields in subclasses that hide fields of the superclass."
+
+- id: errorprone.EqualsHashCode
+  tool: errorprone
+  native: EqualsHashCode
+  default: error
+  category: correctness
+  agent: "Override hashCode() whenever equals() is overridden."
+
+- id: errorprone.WildcardImport
+  tool: errorprone
+  native: WildcardImport
+  default: error
+  category: imports
+  agent: "Never use wildcard imports."
+
+- id: errorprone.EmptyBlockTag
+  tool: errorprone
+  native: EmptyBlockTag
+  default: error
+  category: documentation
+  agent: "Give every Javadoc block tag a description."
+
+- id: errorprone.InvalidParam
+  tool: errorprone
+  native: InvalidParam
+  default: error
+  category: documentation
+  agent: "Javadoc @param must name an existing parameter."
+
+- id: errorprone.InvalidThrows
+  tool: errorprone
+  native: InvalidThrows
+  default: error
+  category: documentation
+  agent: "Javadoc @throws must name an exception the method can throw."
+
+- id: errorprone.InvalidBlockTag
+  tool: errorprone
+  native: InvalidBlockTag
+  default: error
+  category: documentation
+  agent: "Use only valid Javadoc block tags."
+
+- id: errorprone.ThrowSpecificExceptions
+  tool: errorprone
+  native: ThrowSpecificExceptions
+  default: error
+  category: correctness
+  agent: "Throw specific exception types instead of RuntimeException, Exception or Throwable."
+
+- id: errorprone.Finalize
+  tool: errorprone
+  native: Finalize
+  default: error
+  category: design
+  agent: "Never override finalize(); use try-with-resources or Cleaner."
+
+- id: errorprone.EqualsIncompatibleType
+  tool: errorprone
+  native: EqualsIncompatibleType
+  default: error
+  category: correctness
+  agent: "Never call equals() on objects of incompatible types."
+
+- id: errorprone.InconsistentHashCode
+  tool: errorprone
+  native: InconsistentHashCode
+  default: error
+  category: correctness
+  agent: "Compute hashCode() from the same fields equals() compares."
+
+- id: errorprone.IdentityBinaryExpression
+  tool: errorprone
+  native: IdentityBinaryExpression
+  default: error
+  category: correctness
+  agent: "Never use identical operands in a binary expression such as a == a."
+
+- id: errorprone.GuardedBy
+  tool: errorprone
+  native: GuardedBy
+  default: error
+  category: concurrency
+  agent: "Access @GuardedBy members only while holding the declared lock."
+
+- id: errorprone.WaitNotInLoop
+  tool: errorprone
+  native: WaitNotInLoop
+  default: error
+  category: concurrency
+  agent: "Call wait() only inside a loop that rechecks its condition."
+
+- id: errorprone.SynchronizeOnNonFinalField
+  tool: errorprone
+  native: SynchronizeOnNonFinalField
+  default: error
+  category: concurrency
+  agent: "Never synchronize on a non-final field."
+
+- id: errorprone.UnsynchronizedOverridesSynchronized
+  tool: errorprone
+  native: UnsynchronizedOverridesSynchronized
+  default: error
+  category: concurrency
+  agent: "Never override a synchronized method with an unsynchronized one."
+
+- id: errorprone.StaticGuardedByInstance
+  tool: errorprone
+  native: StaticGuardedByInstance
+  default: error
+  category: concurrency
+  agent: "Never guard static state with an instance lock."
+
+- id: errorprone.BoxedPrimitiveConstructor
+  tool: errorprone
+  native: BoxedPrimitiveConstructor
+  default: error
+  category: performance
+  agent: "Use valueOf() instead of boxed primitive constructors."
+
+- id: errorprone.UnnecessaryBoxedVariable
+  tool: errorprone
+  native: UnnecessaryBoxedVariable
+  default: error
+  category: performance
+  agent: "Use primitives instead of boxed local variables where null is impossible."
+
+- id: errorprone.LoopOverCharArray
+  tool: errorprone
+  native: LoopOverCharArray
+  default: error
+  category: performance
+  agent: "Do not call toCharArray() only to iterate over a string; use charAt()."
+
+- id: errorprone.UnnecessaryAssignment
+  tool: errorprone
+  native: UnnecessaryAssignment
+  default: error
+  category: correctness
+  agent: "Remove assignments whose value is already guaranteed."
+
+- id: errorprone.ReturnValueIgnored
+  tool: errorprone
+  native: ReturnValueIgnored
+  default: error
+  category: correctness
+  agent: "Never ignore the return value of methods that have no side effects."
+
+- id: errorprone.CheckReturnValue
+  tool: errorprone
+  native: CheckReturnValue
+  default: error
+  category: correctness
+  agent: "Never ignore the return value of methods annotated @CheckReturnValue."
+
+- id: archunit.FieldsMustBePrivate
+  tool: archunit
+  native: FIELDS_MUST_BE_PRIVATE
+  default: error
+  category: architecture
+  sonar: [java:S1104]
+  agent: "Keep non-static-final fields private."
+
+- id: archunit.NoCloneOverride
+  tool: archunit
+  native: NO_CLONE_OVERRIDE
+  default: error
+  category: architecture
+  agent: "Never override clone(); use copy constructors or factories."
+
+- id: archunit.ImmutableExceptions
+  tool: archunit
+  native: IMMUTABLE_EXCEPTIONS
+  default: error
+  category: architecture
+  agent: "Declare all fields of exception classes final."

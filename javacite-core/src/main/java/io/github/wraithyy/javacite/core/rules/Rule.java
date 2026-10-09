@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * One registry entry; nativeKey is the tool's own identifier for the rule. Properties are passed
- * through to the tool config verbatim (Checkstyle module properties, PMD rule properties).
+ * through to the tool config verbatim (PMD rule properties).
  */
 public record Rule(
         String id,

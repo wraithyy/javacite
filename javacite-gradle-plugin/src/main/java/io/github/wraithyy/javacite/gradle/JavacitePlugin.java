@@ -3,18 +3,17 @@ package io.github.wraithyy.javacite.gradle;
 import io.github.wraithyy.javacite.core.config.ConfigException;
 import io.github.wraithyy.javacite.core.config.ConfigLoader;
 import io.github.wraithyy.javacite.core.config.JavaciteConfig;
+import io.github.wraithyy.javacite.core.config.SonarMode;
 import io.github.wraithyy.javacite.gradle.tasks.DoctorTask;
 import io.github.wraithyy.javacite.gradle.tasks.InitTask;
 import io.github.wraithyy.javacite.gradle.tasks.Probes;
 import io.github.wraithyy.javacite.gradle.tasks.SonarProfileTask;
+import io.github.wraithyy.javacite.gradle.tasks.SonarPropertiesTask;
 import io.github.wraithyy.javacite.gradle.wiring.BannedDepsWiring;
-import io.github.wraithyy.javacite.gradle.wiring.CheckstyleWiring;
 import io.github.wraithyy.javacite.gradle.wiring.DependencyCheckWiring;
 import io.github.wraithyy.javacite.gradle.wiring.ErrorProneWiring;
 import io.github.wraithyy.javacite.gradle.wiring.JacocoWiring;
 import io.github.wraithyy.javacite.gradle.wiring.PmdWiring;
-import io.github.wraithyy.javacite.gradle.wiring.SonarWiring;
-import io.github.wraithyy.javacite.gradle.wiring.SpotbugsWiring;
 import io.github.wraithyy.javacite.gradle.wiring.SpotlessWiring;
 import org.gradle.api.GradleException;
 import org.gradle.api.JavaVersion;
@@ -57,9 +56,12 @@ public class JavacitePlugin implements Plugin<Project> {
             InitTask.register(project);
             DoctorTask.register(project);
             SonarProfileTask.register(project);
+            if (config.get().sonar() != SonarMode.OFF) {
+                SonarPropertiesTask.register(project, config.map(JavaciteConfig::java));
+            }
         } else {
             project.getLogger()
-                    .info("javacite: javaciteInit, javaciteDoctor and javaciteSonarProfile are registered on the root"
+                    .info("javacite: javaciteInit, javaciteDoctor, javaciteSonarProfile and javaciteSonarProperties are registered on the root"
                             + " project only; apply the plugin there and run them from the root.");
         }
         project.getPluginManager().withPlugin("java", ignored -> configure(project, extension, config));
@@ -72,7 +74,7 @@ public class JavacitePlugin implements Plugin<Project> {
 
         project.getTasks().register("javaciteCheck", task -> {
             task.setGroup("verification");
-            task.setDescription("Fast static checks: format, compile with Error Prone, Checkstyle, PMD, SpotBugs.");
+            task.setDescription("Fast static checks: format, compile with Error Prone and NullAway, PMD.");
         });
         project.getTasks().register("javaciteFix", task -> {
             task.setGroup("formatting");
@@ -82,12 +84,9 @@ public class JavacitePlugin implements Plugin<Project> {
         BannedDepsWiring.apply(project, extension);
         DependencyCheckWiring.apply(project, extension);
         JacocoWiring.apply(project, extension);
-        SonarWiring.apply(project, extension);
         SpotlessWiring.apply(project, extension);
         ErrorProneWiring.apply(project, extension);
-        CheckstyleWiring.apply(project, extension);
         PmdWiring.apply(project, extension);
-        SpotbugsWiring.apply(project, extension);
 
         // Toolchain is only final after the build script ran, hence afterEvaluate for the gate alone;
         // when another plugin applied java from its own afterEvaluate, evaluation is already over.

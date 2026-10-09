@@ -3,9 +3,7 @@ package io.github.wraithyy.javacite.maven;
 import io.github.wraithyy.javacite.core.config.ConfigLoader;
 import io.github.wraithyy.javacite.core.config.JavaciteConfig;
 import io.github.wraithyy.javacite.core.config.Tool;
-import io.github.wraithyy.javacite.core.generate.CheckstyleXmlGenerator;
 import io.github.wraithyy.javacite.core.generate.PmdRulesetGenerator;
-import io.github.wraithyy.javacite.core.generate.SpotbugsFilterGenerator;
 import io.github.wraithyy.javacite.core.rules.ResolvedRules;
 import io.github.wraithyy.javacite.core.spring.SpringArtifacts;
 import java.io.File;
@@ -96,14 +94,8 @@ public final class JavaciteSupport {
         ResolvedRules rules = ResolvedRules.of(config, isSpring(config, project));
         Path dir = Path.of(project.getBuild().getDirectory(), "javacite");
         Files.createDirectories(dir);
-        if (config.tool(Tool.CHECKSTYLE).enabled()) {
-            Files.writeString(dir.resolve("checkstyle.xml"), new CheckstyleXmlGenerator().generate(rules));
-        }
         if (config.tool(Tool.PMD).enabled()) {
             Files.writeString(dir.resolve("pmd.xml"), new PmdRulesetGenerator().generate(rules));
-        }
-        if (config.tool(Tool.SPOTBUGS).enabled()) {
-            Files.writeString(dir.resolve("spotbugs-exclude.xml"), new SpotbugsFilterGenerator().generate(rules));
         }
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+/** Web-layer slice test of the greeting endpoint. */
 @WebMvcTest(GreetingController.class)
 class GreetingControllerTest {
 
