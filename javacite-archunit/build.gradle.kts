@@ -16,7 +16,7 @@ dependencies {
     testImplementation("org.springframework:spring-web:6.2.19")
     testImplementation("org.springframework:spring-tx:6.2.19")
     testImplementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    testImplementation("org.springframework.boot:spring-boot-test:3.5.16")
+    testImplementation("org.springframework.boot:spring-boot-test:4.1.1")
     testImplementation("org.mockito:mockito-core:5.24.0")
 }
 
